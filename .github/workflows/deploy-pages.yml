@@ -29,8 +29,10 @@ jobs:
       - name: Rebuild site bundle
         shell: bash
         run: |
-          cat .bootstrap/part*.txt > /tmp/site.b64
-          base64 -d /tmp/site.b64 > /tmp/site.zip
+          set -euxo pipefail
+          cat .bootstrap/part*.txt | tr -d '\r\n ' > /tmp/site.b64
+          base64 --decode --ignore-garbage /tmp/site.b64 > /tmp/site.zip
+          unzip -t /tmp/site.zip
           mkdir -p _site
           unzip -q /tmp/site.zip -d _site
           test -f _site/index.html
