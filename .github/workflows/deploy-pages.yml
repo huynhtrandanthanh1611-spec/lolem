@@ -21,37 +21,26 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout website source
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: pages-setup
 
-      - name: Rebuild site bundle
+      - name: Prepare ZIP 3 website
         shell: bash
         run: |
           set -euxo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          import base64, re
-
-          parts = sorted(Path('.bootstrap').glob('part*.txt'))
-          text = ''.join(p.read_text(encoding='utf-8').strip() for p in parts)
-          text = re.sub(r'\s+', '', text)
-          print('parts:', [(p.name, len(p.read_text(encoding="utf-8").strip())) for p in parts])
-          print('base64 length before padding:', len(text), 'mod4=', len(text) % 4)
-          text += '=' * (-len(text) % 4)
-          print('base64 length after padding:', len(text), 'mod4=', len(text) % 4)
-          data = base64.b64decode(text, validate=True)
-          Path('/tmp/site.zip').write_bytes(data)
-          print('decoded bytes:', len(data), 'header:', data[:4])
-          PY
-          unzip -t /tmp/site.zip
+          ZIP_FILE="hoang-tu-lo-lem-github-pages(3).zip"
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "Missing $ZIP_FILE in repository root. Upload ZIP (3) to the main branch, then this workflow will deploy it automatically."
+            exit 1
+          fi
+          unzip -t "$ZIP_FILE"
           rm -rf _site
           mkdir -p _site
-          unzip -q /tmp/site.zip -d _site
+          unzip -q "$ZIP_FILE" -d _site
           test -f _site/index.html
           node --check _site/app.js
           node --check _site/tilt-controller.js
+          touch _site/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
