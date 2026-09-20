@@ -1,4 +1,3 @@
-import {buildRewardPlan,visibleCheckpoints} from './rewards.js';
 import {TiltController,PoseCalibration,TILT_CONFIG,headRoll} from './tilt-controller.js';
 function questionId(){return crypto.randomUUID?.()||Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('')}
 const $=s=>document.querySelector(s), app=$('#app'), audio=$('#music');
@@ -8,7 +7,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const defaults=[['83 … 84','<','>',0],['25 + 14 = ?','39','41',0],['60 … 56','<','>',1],['18 − 8 = ?','10','12',0],['Số liền sau 49 là…','48','50',1],['7 + 8 = ?','15','16',0],['92 … 89','>','<',0],['36 − 12 = ?','22','24',1],['5 chục bằng…','5','50',1],['40 + 20 = ?','60','70',0]].map((q,i)=>({id:String(i+1),text:q[0],left:q[1],right:q[2],correct:q[3]}));
 const defaultSettings={volume:.35,loop:true,effects:true,shuffle:false,seconds:0,threshold:13,hold:700};
 let questions=defaults,settings={...defaultSettings};try{const q=JSON.parse(localStorage.getItem('royal-questions'));if(validQuestions(q))questions=q;settings={...defaultSettings,...JSON.parse(localStorage.getItem('royal-settings')||'{}')}}catch{}
-let rewardPlan=[],earnedRewards=[],celebrationTimers=[],celebrationEpoch=0,awaitingCenter=false;
+let completedQuestions=0,celebrationTimers=[],celebrationEpoch=0,awaitingCenter=false;
 let inputMode='tilt',calibrated=false,cameraReady=false,modelReady=false,calibrationTimer=null,calibrationFailed=false,detectFailures=0,modelLoadPromise=null;
 const tilt=new TiltController(),poseCalibration=new PoseCalibration();
 let detecting=false,lastFaceAt=0,lastDetectError=0,loopEpoch=0;
@@ -47,12 +46,12 @@ function renderHome(){app.innerHTML=`<section class="setup-lobby"><div class="se
 function renderSettings(){app.innerHTML=`<div class="page-title"><div><div class="eyebrow">Góc của giáo viên</div><h2>Thiết lập trò chơi</h2></div>${btn('Lưu thiết lập','save-settings','save','primary')}</div><div class="two-cols"><section class="panel"><h3>${icon('music')} Nhạc nền</h3><button class="upload" data-action="upload-music">${icon('upload')} ${musicName?esc(musicName):'🎵 THÊM NHẠC NỀN'}</button><p class="muted">MP3, WAV, M4A nếu trình duyệt hỗ trợ.</p><div class="row">${btn('Nghe thử','preview-music','play')}${btn('Tạm dừng','pause-music','pause')}</div><div class="row">${btn('Thay nhạc khác','upload-music','refresh')}${btn('Xóa nhạc','delete-music','trash')}</div><label class="field">Âm lượng <div class="row">${icon('volume')}<input id="volume" type="range" min="0" max="100" value="${Math.round(settings.volume*100)}"><output id="volume-value">${Math.round(settings.volume*100)}%</output></div></label><label class="check"><input type="checkbox" id="loop" ${settings.loop?'checked':''}>Phát lặp lại nhạc nền</label><p class="hint">Nhạc được lưu trên trình duyệt của thiết bị này. Khi đổi câu hỏi, bài nhạc tiếp tục phát.</p></section><section class="panel"><h3>${icon('settings')} Cách chơi</h3><label class="check"><input type="checkbox" id="effects" ${settings.effects?'checked':''}>Bật âm thanh đúng / sai</label><label class="check"><input type="checkbox" id="shuffle" ${settings.shuffle?'checked':''}>Trộn thứ tự câu hỏi</label><label class="field">Thời gian mỗi câu<select id="seconds">${[0,10,15,20,30,60].map(n=>`<option value="${n}" ${settings.seconds===n?'selected':''}>${n?n+' giây':'Không giới hạn'}</option>`).join('')}</select></label><label class="field">Độ nghiêng để chọn<div class="row"><input id="threshold" type="range" min="8" max="25" value="${settings.threshold}"><output id="threshold-value">${settings.threshold}°</output></div></label><label class="field">Giữ đầu nghiêng<select id="hold">${[400,650,700,900,1200].map(n=>`<option value="${n}" ${settings.hold===n?'selected':''}>${n/1000} giây</option>`).join('')}</select></label><p class="hint">Bắt đầu với tư thế thẳng đầu. Dùng nút “Hiệu chỉnh” trong màn chơi khi đổi người chơi hoặc vị trí camera.</p></section></div>`}
 function renderQuestions(){app.innerHTML=`<div class="page-title"><div><div class="eyebrow">Chuẩn bị thử thách</div><h2>Bộ câu hỏi <span class="muted">(${questions.length})</span></h2></div>${btn('Thêm câu','add','plus','primary')}</div><div class="row">${btn('Xuất câu hỏi','export','upload')}${btn('Nhập câu hỏi','import','download')}${btn('Bộ Toán mẫu','sample','refresh')}</div><div class="question-list">${questions.map((q,i)=>`<article class="question-row"><span class="qnumber">${String(i+1).padStart(2,'0')}</span><div class="qtext"><strong>${esc(q.text)}</strong><span class="muted">Trái: ${esc(q.left)} ${q.correct===0?'✓':''} &nbsp; · &nbsp; Phải: ${esc(q.right)} ${q.correct===1?'✓':''}</span></div><div class="row"><button class="icon-button" data-edit="${i}" title="Sửa câu hỏi" aria-label="Sửa câu ${i+1}">${icon('edit')}</button><button class="icon-button" data-copy="${i}" title="Nhân bản" aria-label="Nhân bản câu ${i+1}">${icon('copy')}</button><button class="icon-button danger" data-delete="${i}" title="Xóa câu hỏi" aria-label="Xóa câu ${i+1}">${icon('trash')}</button></div></article>`).join('')||'<div class="panel empty">Chưa có câu hỏi. Hãy thêm câu mới hoặc chọn bộ Toán mẫu.</div>'}</div><p class="muted">Câu hỏi được lưu trên trình duyệt này. Xuất bộ câu hỏi để dùng trên thiết bị khác.</p>`}
 function editQuestion(i=-1){const q=questions[i]||{text:'',left:'',right:'',correct:0};const d=document.createElement('dialog');d.innerHTML=`<form id="qform"><h3>${i<0?'Thêm':'Sửa'} câu hỏi</h3><label class="field">Nội dung câu hỏi<input name="text" type="text" maxlength="300" required value="${esc(q.text)}"></label><label class="field">Đáp án bên trái<input name="left" type="text" maxlength="150" required value="${esc(q.left)}"></label><label class="field">Đáp án bên phải<input name="right" type="text" maxlength="150" required value="${esc(q.right)}"></label><label class="field">Đáp án đúng<select name="correct"><option value="0" ${q.correct===0?'selected':''}>Bên trái</option><option value="1" ${q.correct===1?'selected':''}>Bên phải</option></select></label><div class="row"><button class="primary" type="submit">${icon('save')} Lưu câu hỏi</button><button class="secondary" type="button" id="cancel-q">Hủy</button></div></form>`;document.body.append(d);d.showModal();d.querySelector('#cancel-q').onclick=()=>d.close();d.onclose=()=>d.remove();d.querySelector('form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),q={id:questionId(),text:f.get('text').trim(),left:f.get('left').trim(),right:f.get('right').trim(),correct:Number(f.get('correct'))};if(!validQuestions([q]))return toast('Vui lòng điền đủ câu hỏi và hai đáp án.');if(i<0){if(questions.length>=300)return toast('Tối đa 300 câu hỏi.');questions.push(q)}else questions[i]=q;saveQuestions();d.close();renderQuestions()}}
-function start(){tilt.reset();if(!canStart()){if(view!=='home')go('home');camStatus(!cameraReady?'① Bật camera để bắt đầu.':!modelReady?'Đang chuẩn bị nhận diện khuôn mặt…':'② Nhấn HIỆU CHỈNH trước khi bắt đầu.');return}if(!questions.length){go('questions');return toast('Hãy thêm ít nhất một câu hỏi trước khi chơi.')}round=questions.map(q=>({...q}));if(settings.shuffle)for(let i=round.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[round[i],round[j]]=[round[j],round[i]]}cancelCelebration();rewardPlan=buildRewardPlan(round.length);earnedRewards=[];index=0;score=0;locked=false;awaitingCenter=false;feedback='';selected=-1;view='play';render();prepareQuestionInput();unlockSound();if(musicEnabled&&musicUrl){audio.currentTime=0;playMusic()}startTimer();window.scrollTo(0,0)}
-function journey(){return `<div class="magic-journey" aria-label="Con đường những bục phép thuật"><div id="journey-lane" style="--steps:${round.length}"><div class="stepping-stones">${round.map((_,i)=>`<span class="journey-stone" data-step="${i}" style="left:${i/round.length*100}%" aria-label="Bục ${i+1}"></span>`).join('')}</div><span id="princess-walker" class="princess-walker"><img src="./assets/princess-walker.webp" alt="Lọ Lem"></span><span id="prince-goal" class="prince-goal" role="img" aria-label="Hoàng tử">🤴</span></div></div>`}
+function start(){tilt.reset();if(!canStart()){if(view!=='home')go('home');camStatus(!cameraReady?'① Bật camera để bắt đầu.':!modelReady?'Đang chuẩn bị nhận diện khuôn mặt…':'② Nhấn HIỆU CHỈNH trước khi bắt đầu.');return}if(!questions.length){go('questions');return toast('Hãy thêm ít nhất một câu hỏi trước khi chơi.')}round=questions.map(q=>({...q}));if(settings.shuffle)for(let i=round.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[round[i],round[j]]=[round[j],round[i]]}cancelCelebration();completedQuestions=0;index=0;score=0;locked=false;awaitingCenter=false;feedback='';selected=-1;view='play';render();prepareQuestionInput();unlockSound();if(musicEnabled&&musicUrl){audio.currentTime=0;playMusic()}startTimer();window.scrollTo(0,0)}
+function journey(){return `<div class="magic-journey" aria-label="Con đường những bục phép thuật"><div id="journey-lane" style="--steps:${round.length}"><div class="journey-path" aria-hidden="true"></div><div class="stepping-stones">${round.map((_,i)=>`<span class="journey-stone" data-step="${i}" style="left:${i/round.length*100}%" aria-label="Bục ${i+1}"></span>`).join('')}</div><span id="princess-walker" class="princess-walker" role="img" aria-label="Lọ Lem tóc vàng"><span class="character-sprite cinderella-sprite" aria-hidden="true"></span></span><span id="prince-goal" class="prince-goal" role="img" aria-label="Hoàng tử toàn thân đang chờ"><span class="character-sprite prince-sprite" aria-hidden="true"></span></span><span id="royal-embrace" class="royal-embrace" role="img" aria-label="Hoàng tử đang ôm Lọ Lem" aria-hidden="true"><span class="character-sprite embrace-sprite" aria-hidden="true"></span><span class="embrace-sparkles" aria-hidden="true">✧ ✦ ✧</span></span></div></div>`}
 
 
 function updateJourney(walking=false){
-  const count=earnedRewards.length,lane=$('#journey-lane');if(!lane)return;
+  const count=completedQuestions,lane=$('#journey-lane');if(!lane)return;
   const progress=Math.min(count/round.length,1),walker=$('#princess-walker');
   walker.style.left=progress*100+'%';walker.style.transform='none';
   walker.title=`Đã hoàn thành ${count}/${round.length} câu hỏi`;
@@ -70,31 +69,32 @@ function prepareQuestionInput(){
 }
 
 function startTimer(){clearInterval(timer);remaining=settings.seconds;if(!remaining)return;if($('#timer'))$('#timer').textContent=remaining+'s';timer=setInterval(()=>{if(view!=='play'||locked||calibrating||cameraState==='loading'||(inputMode==='tilt'&&(!hasFace||!calibrated))||document.hidden)return;remaining--;if($('#timer'))$('#timer').textContent=remaining+'s';if(remaining<=0)answer(-1)},1000)}
-function cancelCelebration(){celebrationEpoch++;celebrationTimers.forEach(clearTimeout);celebrationTimers=[];$('#reward-stage')?.remove();$('#final-magic')?.remove();clearTimeout(advance)}
+function cancelCelebration(){celebrationEpoch++;celebrationTimers.forEach(clearTimeout);celebrationTimers=[];clearTimeout(advance)}
 function celebrationLater(fn,ms){const epoch=celebrationEpoch;celebrationTimers.push(setTimeout(()=>{if(epoch===celebrationEpoch&&view==='play')fn()},ms))}
 function advanceQuestion(){index++;if(index>=round.length)finish();else updateQuestion()}
-function showReward(reward){
-  const stage=document.createElement('div');stage.id='reward-stage';stage.className='reward-stage';stage.setAttribute('role','status');stage.innerHTML=`<div class="reward-panel"><span class="reward-spark reward-spark-a">✦</span><span class="reward-symbol">${reward.icon}</span><span class="reward-spark reward-spark-b">✦</span><strong class="reward-label">${esc(reward.label)}</strong><span class="reward-subtitle">Một món đồ phép thuật cho Lọ Lem!</span></div>`;app.append(stage);
-}
-function flyReward(){const stage=$('#reward-stage'),symbol=stage?.querySelector('.reward-symbol'),lane=$('#journey-lane');if(!symbol||!lane)return;const from=symbol.getBoundingClientRect(),to=lane.getBoundingClientRect(),x=to.left+to.width*(earnedRewards.length+1)/round.length,y=to.top+to.height*.72;stage.style.setProperty('--fly-x',`${x-from.left-from.width/2}px`);stage.style.setProperty('--fly-y',`${y-from.top-from.height/2}px`);stage.classList.add('reward-flying')}
 function answer(side){
   if(view!=='play'||locked)return;
   locked=true;awaitingCenter=false;tilt.waitForCenter();clearInterval(timer);cancelCelebration();
-  const q=round[index],good=side===q.correct,reward=rewardPlan[index];if(good)score++;
+  const q=round[index],good=side===q.correct;if(good)score++;
   $('#score').textContent=score;clearHold();
-  ['left','right'].forEach((s,i)=>{const b=$('#'+s+'-answer');b.disabled=true;if(i===q.correct)b.classList.add('correct');else if(i===side)b.classList.add('wrong')});
-  $('#feedback').textContent=good?'✓ CHÍNH XÁC! Lọ Lem nhận được một phép màu!':side<0?'⏱ Hết giờ! Thử tiếp ở câu sau nhé!':'✕ CHƯA ĐÚNG! Thử tiếp ở câu sau nhé!';effect(good);
-  if(!good){celebrationLater(()=>{earnedRewards.push(reward);updateJourney(true)},850);celebrationLater(advanceQuestion,1800);return}
-  const chosen=$('#'+(side===0?'left':'right')+'-answer'),value=chosen.querySelector('.value'),rect=value.getBoundingClientRect();
-  const center=rect.left+rect.width/2,maxWidth=2*Math.min(center-4,window.innerWidth-center-4);chosen.style.setProperty('--answer-zoom',String(Math.max(1,Math.min(1.5,maxWidth/Math.max(rect.width,1)))));chosen.classList.add('celebrating-answer');
-  celebrationLater(()=>showReward(reward),500);
-  celebrationLater(flyReward,1100);
-  celebrationLater(()=>{$('#reward-stage')?.remove();earnedRewards.push(reward);updateJourney(true)},1700);
-  celebrationLater(advanceQuestion,2400);
+  ['left','right'].forEach((s,i)=>{const button=$('#'+s+'-answer');button.disabled=true;if(i===q.correct)button.classList.add('correct');else if(i===side)button.classList.add('wrong')});
+  $('#feedback').textContent=good?'✓ CHÍNH XÁC! Lọ Lem tiến thêm một bước!':side<0?'⏱ Hết giờ! Thử tiếp ở câu sau nhé!':'✕ CHƯA ĐÚNG! Thử tiếp ở câu sau nhé!';
+  effect(good);
+  celebrationLater(()=>{completedQuestions++;updateJourney(true)},400);
+  celebrationLater(advanceQuestion,1200);
 }
-
-
-function finish(){cancelCelebration();clearInterval(timer);audio.pause();locked=true;const lane=$('#journey-lane');if(!lane){showFinale();return}lane.classList.add('journey-complete');const stage=document.createElement('div');stage.id='final-magic';stage.className='final-magic';stage.setAttribute('aria-live','polite');stage.innerHTML='<strong>✨ LỌ LEM ĐÃ GẶP HOÀNG TỬ! ✨</strong><span>💖</span>';app.append(stage);effect(true);celebrationLater(()=>stage.classList.add('transforming'),800);celebrationLater(showFinale,1200)}
+function finish(){
+  cancelCelebration();clearInterval(timer);audio.pause();locked=true;
+  const lane=$('#journey-lane');if(!lane){showFinale();return}
+  lane.classList.add('journey-embrace');
+  $('#princess-walker').setAttribute('aria-hidden','true');
+  $('#prince-goal').setAttribute('aria-hidden','true');
+  $('#royal-embrace').setAttribute('aria-hidden','false');
+  $('#feedback').textContent='Lọ Lem đã đến bên Hoàng tử!';
+  effect(true);
+  // The completed embrace remains visible for 1.1 seconds before the ending.
+  celebrationLater(showFinale,1100);
+}
 function showFinale(){stopCamera();view='end';render()}
 function royalCrown(){return '<svg class="royal-crown" viewBox="0 0 160 62" aria-hidden="true"><g fill="#f3d477" stroke="#a8691f" stroke-width="2"><path d="M42 46 30 19 62 32 80 5 98 32 130 19 118 46Z"/><path d="M43 48Q80 42 117 48L115 56H45Z"/><circle cx="30" cy="17" r="4"/><circle cx="80" cy="5" r="4"/><circle cx="130" cy="17" r="4"/></g><path d="m80 24 7 11-7 10-7-10Z" fill="#315a9d" stroke="#fff9ea"/><g fill="none" stroke="#c9972e" stroke-width="3"><path d="M43 50C17 60 3 38 17 35C28 33 25 46 18 44M117 50C143 60 157 38 143 35C132 33 135 46 142 44"/></g></svg>'}
 function renderEnd(){

@@ -37,6 +37,7 @@ jobs:
           cp index.html _site/index.html
           cp app.js _site/app.js
           cp style.css _site/style.css
+          cp royal-characters-v6.webp _site/assets/royal-characters-v6.webp
           cp royal-ball-finale.jpg _site/assets/royal-ball-finale.jpg
           test -f _site/index.html
           node --input-type=module --check < _site/app.js
