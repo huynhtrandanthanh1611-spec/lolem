@@ -211,3 +211,8 @@ body[data-screen=play]>main{grid-template-rows:auto clamp(88px,12dvh,116px) minm
 .pose-0{transform:rotate(-10deg)}.pose-1{transform:none}.pose-2{transform:rotate(10deg)}
 @media(max-height:480px){body[data-screen=play]>main{grid-template-rows:30px 66px minmax(0,1fr) 44px}#journey-lane{--character-size:54px}}
 @media(prefers-reduced-motion:reduce){.princess-walker,.royal-embrace,.prince-goal{transition:none}.princess-walker.walking .character-sprite{animation:none}}
+
+/* Give the embrace a real accessible box, matching its visible sprite. */
+.royal-embrace{width:var(--character-size);transform:translateX(-50%)}
+.royal-embrace>.character-sprite{transform:none}
+.royal-embrace .embrace-sparkles{left:50%}
