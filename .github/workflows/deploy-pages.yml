@@ -34,6 +34,7 @@ jobs:
           unzip -t "$ZIP_FILE"
           mkdir -p _site
           unzip -q "$ZIP_FILE" -d _site
+          cp index.html _site/index.html
           cp app.js _site/app.js
           cp style.css _site/style.css
           cp royal-ball-finale.jpg _site/assets/royal-ball-finale.jpg
