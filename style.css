@@ -139,3 +139,46 @@ body[data-screen="end"] .royal-finale{background-position:center;animation:endin
 @keyframes ending-fade{from{opacity:0}to{opacity:1}}
 @media(max-width:600px){.play-brand{font-size:10px;white-space:normal}.brand{font-size:12px}.royal-finale .stat{min-width:0;padding:4px 8px}.finale-summary{padding:8px 12px}.finale-heading{padding:8px 12px}}
 @media(prefers-reduced-motion:reduce){.princess-walker{transition:none}}
+
+/* Storybook finale. Foreground artwork is contained, never face-cropped. */
+body[data-screen="end"] .storybook-ending{display:block;padding:0;background:#263956;isolation:isolate}
+.storybook-ending .ballroom-surround{position:absolute;inset:0;background:url('./assets/royal-ball-finale.jpg?v=royal5') center/cover no-repeat;filter:blur(7px) brightness(.84);z-index:-3}
+.storybook-ending .ballroom-art{position:absolute;top:12%;bottom:2%;left:0;right:0;display:flex;align-items:center;justify-content:center;z-index:-2}
+.storybook-ending .ballroom-art img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;mask-image:linear-gradient(90deg,transparent,black 12%,black 88%,transparent);filter:none}
+.storybook-ending .finale-heading{position:absolute;top:4.8%;left:50%;transform:translateX(-50%);width:min(72vw,1080px);margin:0;padding:clamp(9px,1.4dvh,20px) 24px;border:3px solid #c9972e;border-radius:48% 48% 20% 20% / 22% 22% 26% 26%;background:linear-gradient(110deg,#fff4dc,#fffdf5 45%,#ffedc2);box-shadow:inset 0 0 0 3px #fff9ea,inset 0 -6px 12px #d89e3540,0 3px 0 #8c561e,0 6px 20px #18315350;isolation:isolate;animation:ribbon-arrive .65s .15s both}
+.royal-ribbon:before,.royal-ribbon:after{content:"";position:absolute;top:26%;width:9%;height:76%;background:linear-gradient(#fff9ea,#f4d799);border:2px solid #c9972e;z-index:-1}
+.royal-ribbon:before{left:-6%;transform:rotate(-12deg);border-radius:45% 0 40% 45%}
+.royal-ribbon:after{right:-6%;transform:rotate(12deg);border-radius:0 45% 45% 40%}
+.storybook-ending .royal-crown{position:absolute;width:clamp(90px,10vw,150px);height:clamp(35px,4vw,58px);top:0;left:50%;transform:translate(-50%,-78%);overflow:visible;filter:drop-shadow(0 2px 1px #fff9ea80);pointer-events:none}
+.storybook-ending .finale-heading h1{font-family:Nunito,ui-rounded,system-ui,sans-serif;font-weight:900;letter-spacing:0;line-height:1.18;font-size:clamp(28px,3.5vw,59px);margin:0;color:#d58d18;background:linear-gradient(#f8dc83 12%,#d89220 76%);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px #8b4b0a;filter:drop-shadow(0 2px 0 #fff9ea) drop-shadow(0 2px 0 #a36213);text-shadow:none}
+.storybook-ending .finale-heading p{font-family:Nunito,ui-rounded,system-ui,sans-serif;font-size:clamp(15px,1.6vw,25px);font-weight:800;color:#234779;text-shadow:none;line-height:1.25;margin:5px 0 0}
+.storybook-ending .royal-results{position:absolute;bottom:3.2%;left:50%;transform:translateX(-50%);width:clamp(580px,46vw,850px);max-width:calc(100vw - 32px);display:flex;flex-direction:column;align-items:stretch;gap:clamp(7px,1dvh,14px);padding:clamp(13px,1.7dvh,24px) clamp(20px,2.4vw,46px) clamp(16px,2dvh,28px);background:linear-gradient(130deg,#fffdf5,#fff4dc);border:3px solid #c9972e;border-radius:22% 22% 17% 17% / 28% 28% 24% 24%;box-shadow:inset 0 0 0 3px #fff9ea,inset 0 0 0 5px #e7be63,0 3px 0 #8c561e,0 9px 24px #18315350;backdrop-filter:none;animation:result-arrive .65s .4s both}
+.royal-results:before,.royal-results:after{content:"❧";position:absolute;bottom:8%;font-family:Georgia,serif;font-size:clamp(42px,4.3vw,68px);color:#c9972e;line-height:1;text-shadow:1px 1px #fff9ea;pointer-events:none}
+.royal-results:before{left:-3%;transform:rotate(-70deg)}
+.royal-results:after{right:-3%;transform:scaleX(-1) rotate(-70deg)}
+.storybook-ending .royal-results>.royal-crown{width:clamp(74px,7vw,110px);height:clamp(29px,3vw,43px);transform:translate(-50%,-75%)}
+.storybook-ending .result-title{color:#693a18;font-weight:900;font-size:clamp(15px,1.4vw,22px);letter-spacing:.6px;line-height:1.25;text-align:center}
+.storybook-ending .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.1vw,18px);margin:6px 0 0}
+.storybook-ending .crystal-card{position:relative;min-width:0;padding:9px 8px 5px;border:2px solid #c9972e;border-radius:18px;background:linear-gradient(145deg,#ffffffb0 15%,transparent 16% 54%,#ffffff65 55% 72%,transparent 73%),linear-gradient(30deg,#c7f3d4,#efffeb);box-shadow:inset 0 0 0 2px #fff9ea,inset 0 0 12px #fff,0 2px 0 #b77726;color:#096940;font-weight:800;line-height:1.15}
+.storybook-ending .crystal-card:before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(45deg);width:14px;height:14px;border:2px solid #c9972e;border-radius:3px;background:linear-gradient(135deg,#fff,#43b78d 52%,#068857);box-shadow:0 0 0 2px #fff9ea}
+.storybook-ending .crystal-card:after{content:"";position:absolute;inset:5px;border:1px solid #fff9ea;border-radius:12px;pointer-events:none}
+.storybook-ending .crystal-wrong{background:linear-gradient(145deg,#ffffffb0 15%,transparent 16% 54%,#ffffff65 55% 72%,transparent 73%),linear-gradient(30deg,#f6c1d9,#fff1f7);color:#a30b51}
+.storybook-ending .crystal-wrong:before{background:linear-gradient(135deg,#fff,#f59dc9 52%,#c81271)}
+.storybook-ending .crystal-score{background:linear-gradient(145deg,#ffffffb0 15%,transparent 16% 54%,#ffffff65 55% 72%,transparent 73%),linear-gradient(30deg,#f9df9e,#fffae7);color:#794315}
+.storybook-ending .crystal-score:before{background:linear-gradient(135deg,#fff,#f3d477 52%,#d58c16)}
+.storybook-ending .crystal-label{font-size:clamp(17px,1.5vw,24px)}
+.storybook-ending .crystal-card strong{font-family:Nunito,ui-rounded,system-ui,sans-serif;font-size:clamp(32px,3.2vw,52px);font-weight:900;line-height:1.1;margin:3px 0 0;text-shadow:0 1px #fff}
+.storybook-ending .end-buttons{display:flex;justify-content:center;gap:clamp(12px,1.5vw,24px);margin:2px 0 0}
+.storybook-ending .end-buttons button{flex:1;max-width:280px;min-width:0;min-height:40px;border:3px double #f3d477;border-radius:999px;background:linear-gradient(#6290e0 0%,#1c5aba 22%,#063b8d 72%,#1267b1);box-shadow:inset 0 2px 1px #d6edff,0 3px 0 #966424,0 5px 8px #18315330;color:#fff9ea;font-size:clamp(14px,1.35vw,21px);font-weight:900;padding:8px 12px;line-height:1.2;gap:7px}
+.storybook-ending .end-buttons button:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:inset 0 2px #d6edff,0 3px #966424,0 0 12px #f3d477}
+.storybook-ending .end-buttons button:active{transform:scale(.97)}
+.storybook-ending .end-buttons svg{width:clamp(19px,1.8vw,26px);height:clamp(19px,1.8vw,26px)}
+.result-jewel{position:absolute;bottom:-13px;left:50%;width:22px;height:22px;transform:translateX(-50%) rotate(45deg);border:3px solid #e9bb51;border-radius:4px;background:linear-gradient(135deg,#d6f5ff,#4eb0ed 45%,#064ba6 50%,#318ade);box-shadow:0 0 0 2px #fff9ea,2px 2px 5px #6d431c55}
+.fairy-dust{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+.fairy-dust span{position:absolute;left:var(--x);top:var(--y);font-size:clamp(10px,1.2vw,22px);color:#fff3bb;text-shadow:0 0 8px #f3d477;animation:fairy-twinkle 3.8s var(--delay) ease-in-out infinite}
+@keyframes fairy-twinkle{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:.85;transform:scale(1)}}
+@keyframes ribbon-arrive{from{opacity:0;transform:translate(-50%,-12px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes result-arrive{from{opacity:0;transform:translate(-50%,24px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-height:800px) and (min-width:900px){.storybook-ending .finale-heading{top:4.8%;padding:8px 20px}.storybook-ending .finale-heading h1{font-size:clamp(28px,3vw,43px)}.storybook-ending .finale-heading p{font-size:18px;margin-top:3px}.storybook-ending .royal-results{gap:6px;padding:12px 24px 16px;bottom:3%}.storybook-ending .crystal-card{padding:8px 6px 4px}.storybook-ending .crystal-card strong{font-size:35px}.storybook-ending .end-buttons button{padding:7px 10px;min-height:38px}.storybook-ending .royal-results>.royal-crown{width:80px;height:31px}.fairy-dust span:nth-child(even){display:none}}
+@media(max-width:899px){.storybook-ending .finale-heading{width:84vw;top:6%;padding:9px 12px}.storybook-ending .finale-heading h1{font-size:clamp(21px,4vw,33px)}.storybook-ending .finale-heading p{font-size:clamp(12px,2.4vw,18px)}.storybook-ending .royal-results{width:min(92vw,620px);padding:15px 18px 20px}.storybook-ending .ballroom-art{top:15%;bottom:25%}.storybook-ending .crystal-label{font-size:16px}.storybook-ending .crystal-card strong{font-size:30px}.storybook-ending .result-title{font-size:14px}.storybook-ending .end-buttons button{font-size:13px}.storybook-ending .stats{gap:8px}}
+@media(prefers-reduced-motion:reduce){.storybook-ending *{animation:none!important;transition:none!important}}

@@ -94,9 +94,26 @@ function answer(side){
 }
 
 
-function finish(){cancelCelebration();clearInterval(timer);audio.pause();locked=true;const lane=$('#journey-lane');if(!lane){showFinale();return}lane.classList.add('journey-complete');const stage=document.createElement('div');stage.id='final-magic';stage.className='final-magic';stage.setAttribute('aria-live','polite');stage.innerHTML='<strong>✨ LỌ LEM ĐÃ GẶP HOÀNG TỬ! ✨</strong><span>💖</span>';app.append(stage);effect(true);celebrationLater(()=>stage.classList.add('transforming'),750);celebrationLater(showFinale,1350)}
+function finish(){cancelCelebration();clearInterval(timer);audio.pause();locked=true;const lane=$('#journey-lane');if(!lane){showFinale();return}lane.classList.add('journey-complete');const stage=document.createElement('div');stage.id='final-magic';stage.className='final-magic';stage.setAttribute('aria-live','polite');stage.innerHTML='<strong>✨ LỌ LEM ĐÃ GẶP HOÀNG TỬ! ✨</strong><span>💖</span>';app.append(stage);effect(true);celebrationLater(()=>stage.classList.add('transforming'),800);celebrationLater(showFinale,1200)}
 function showFinale(){stopCamera();view='end';render()}
-function renderEnd(){app.innerHTML=`<section class="end royal-finale"><div class="finale-shade"></div><div class="finale-heading"><div class="eyebrow">✨ PHÉP MÀU THẦN TIÊN ✨</div><h1>Lọ Lem đã gặp Hoàng tử!</h1><p>Phép màu đã đưa hai người đến bên nhau.</p></div><div class="finale-summary"><div class="result-title">✦ KẾT QUẢ PHÉP MÀU ✦</div><div class="stats"><div class="stat">✅ Đúng<strong>${score}</strong></div><div class="stat">❌ Sai<strong>${round.length-score}</strong></div><div class="stat">🏆 Điểm<strong>${score}/${round.length}</strong></div></div><div class="end-buttons">${btn('CHƠI LẠI','start','refresh','primary')}${btn('TRANG CHỦ','home','home')}</div></div></section>`;const c=document.createElement('div');c.className='sparkles finale-sparkles';c.innerHTML=Array.from({length:28},(_,i)=>`<span style="left:${Math.random()*100}%;animation-delay:${Math.random()}s">${['⭐','✨','💖','👑'][i%4]}</span>`).join('');app.append(c);setTimeout(()=>c.remove(),6000)}
+function royalCrown(){return '<svg class="royal-crown" viewBox="0 0 160 62" aria-hidden="true"><g fill="#f3d477" stroke="#a8691f" stroke-width="2"><path d="M42 46 30 19 62 32 80 5 98 32 130 19 118 46Z"/><path d="M43 48Q80 42 117 48L115 56H45Z"/><circle cx="30" cy="17" r="4"/><circle cx="80" cy="5" r="4"/><circle cx="130" cy="17" r="4"/></g><path d="m80 24 7 11-7 10-7-10Z" fill="#315a9d" stroke="#fff9ea"/><g fill="none" stroke="#c9972e" stroke-width="3"><path d="M43 50C17 60 3 38 17 35C28 33 25 46 18 44M117 50C143 60 157 38 143 35C132 33 135 46 142 44"/></g></svg>'}
+function renderEnd(){
+ app.innerHTML=`<section class="end royal-finale storybook-ending" aria-label="Cảnh kết truyện Lọ Lem">
+ <div class="ballroom-surround" aria-hidden="true"></div>
+ <div class="ballroom-art"><img src="./assets/royal-ball-finale.jpg?v=royal5" alt="Lọ Lem tóc vàng khiêu vũ cùng Hoàng tử trong đại sảnh lâu đài" width="1491" height="1055"></div>
+ <div class="fairy-dust" aria-hidden="true">${Array.from({length:12},(_,i)=>`<span style="--x:${i<6?4+i*4:76+(i-6)*4}%;--y:${18+(i*13)%60}%;--delay:${i*.37}s">✦</span>`).join('')}</div>
+ <div class="finale-heading royal-ribbon">${royalCrown()}<h1>Lọ Lem đã gặp Hoàng tử!</h1><p>Phép màu đã đưa hai người đến bên nhau.</p></div>
+ <div class="finale-summary royal-results">${royalCrown()}<div class="result-title">✦ KẾT QUẢ PHÉP MÀU ✦</div>
+ <div class="stats" aria-label="Kết quả trò chơi">
+ <div class="stat crystal-card crystal-correct"><span class="crystal-label">✓ Đúng</span><strong>${score}</strong></div>
+ <div class="stat crystal-card crystal-wrong"><span class="crystal-label">✕ Sai</span><strong>${round.length-score}</strong></div>
+ <div class="stat crystal-card crystal-score"><span class="crystal-label">🏆 Điểm</span><strong>${score}/${round.length}</strong></div>
+ </div>
+ <div class="end-buttons">${btn('CHƠI LẠI','start','refresh','primary')}${btn('TRANG CHỦ','home','home')}</div>
+ <span class="result-jewel" aria-hidden="true"></span>
+ </div></section>`;
+ window.scrollTo(0,0);
+}
 function unlockSound(){try{audioCtx??=new(window.AudioContext||window.webkitAudioContext)();audioCtx.resume()}catch{}}
 function effect(good){if(!settings.effects)return;unlockSound();if(!audioCtx)return;[good?523:260,good?659:220,good?784:196].forEach((hz,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime+i*.13;o.type='sine';o.frequency.value=hz;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.1,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.2)})}
 async function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open('royal-music',1);r.onupgradeneeded=()=>r.result.createObjectStore('tracks');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
