@@ -99,8 +99,6 @@ function showFinale(){stopCamera();view='end';render()}
 function royalCrown(){return '<svg class="royal-crown" viewBox="0 0 160 62" aria-hidden="true"><g fill="#f3d477" stroke="#a8691f" stroke-width="2"><path d="M42 46 30 19 62 32 80 5 98 32 130 19 118 46Z"/><path d="M43 48Q80 42 117 48L115 56H45Z"/><circle cx="30" cy="17" r="4"/><circle cx="80" cy="5" r="4"/><circle cx="130" cy="17" r="4"/></g><path d="m80 24 7 11-7 10-7-10Z" fill="#315a9d" stroke="#fff9ea"/><g fill="none" stroke="#c9972e" stroke-width="3"><path d="M43 50C17 60 3 38 17 35C28 33 25 46 18 44M117 50C143 60 157 38 143 35C132 33 135 46 142 44"/></g></svg>'}
 function renderEnd(){
  app.innerHTML=`<section class="end royal-finale storybook-ending" aria-label="Cảnh kết truyện Lọ Lem">
- <div class="ballroom-surround" aria-hidden="true"></div>
- <div class="ballroom-art"><img src="./assets/royal-ball-finale.jpg?v=royal5" alt="Lọ Lem tóc vàng khiêu vũ cùng Hoàng tử trong đại sảnh lâu đài" width="1491" height="1055"></div>
  <div class="fairy-dust" aria-hidden="true">${Array.from({length:12},(_,i)=>`<span style="--x:${i<6?4+i*4:76+(i-6)*4}%;--y:${18+(i*13)%60}%;--delay:${i*.37}s">✦</span>`).join('')}</div>
  <div class="finale-heading royal-ribbon">${royalCrown()}<h1>Lọ Lem đã gặp Hoàng tử!</h1><p>Phép màu đã đưa hai người đến bên nhau.</p></div>
  <div class="finale-summary royal-results">${royalCrown()}<div class="result-title">✦ KẾT QUẢ PHÉP MÀU ✦</div>
@@ -217,3 +215,4 @@ document.addEventListener('keydown',e=>{if(view==='play'&&!e.repeat&&['ArrowLeft
 document.addEventListener('visibilitychange',()=>{if(document.hidden){audio.pause();tilt.reset();poseCalibration.reset();clearHold()}else if(view==='play'&&musicEnabled&&musicUrl)audio.play().catch(()=>toast('Nhấn nút Nhạc để phát tiếp.'))});
 window.addEventListener('pagehide',()=>{audio.pause();stopCamera()});
 document.querySelectorAll('[data-icon]').forEach(b=>b.innerHTML=icon(b.dataset.icon)+b.innerHTML);$('.brand').onclick=e=>{e.preventDefault();go('home')};saveSettings();restoreMusic();render();
+
