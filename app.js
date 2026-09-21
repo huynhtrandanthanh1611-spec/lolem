@@ -47,13 +47,13 @@ function renderSettings(){app.innerHTML=`<div class="page-title"><div><div class
 function renderQuestions(){app.innerHTML=`<div class="page-title"><div><div class="eyebrow">Chuẩn bị thử thách</div><h2>Bộ câu hỏi <span class="muted">(${questions.length})</span></h2></div>${btn('Thêm câu','add','plus','primary')}</div><div class="row">${btn('Xuất câu hỏi','export','upload')}${btn('Nhập câu hỏi','import','download')}${btn('Bộ Toán mẫu','sample','refresh')}</div><div class="question-list">${questions.map((q,i)=>`<article class="question-row"><span class="qnumber">${String(i+1).padStart(2,'0')}</span><div class="qtext"><strong>${esc(q.text)}</strong><span class="muted">Trái: ${esc(q.left)} ${q.correct===0?'✓':''} &nbsp; · &nbsp; Phải: ${esc(q.right)} ${q.correct===1?'✓':''}</span></div><div class="row"><button class="icon-button" data-edit="${i}" title="Sửa câu hỏi" aria-label="Sửa câu ${i+1}">${icon('edit')}</button><button class="icon-button" data-copy="${i}" title="Nhân bản" aria-label="Nhân bản câu ${i+1}">${icon('copy')}</button><button class="icon-button danger" data-delete="${i}" title="Xóa câu hỏi" aria-label="Xóa câu ${i+1}">${icon('trash')}</button></div></article>`).join('')||'<div class="panel empty">Chưa có câu hỏi. Hãy thêm câu mới hoặc chọn bộ Toán mẫu.</div>'}</div><p class="muted">Câu hỏi được lưu trên trình duyệt này. Xuất bộ câu hỏi để dùng trên thiết bị khác.</p>`}
 function editQuestion(i=-1){const q=questions[i]||{text:'',left:'',right:'',correct:0};const d=document.createElement('dialog');d.innerHTML=`<form id="qform"><h3>${i<0?'Thêm':'Sửa'} câu hỏi</h3><label class="field">Nội dung câu hỏi<input name="text" type="text" maxlength="300" required value="${esc(q.text)}"></label><label class="field">Đáp án bên trái<input name="left" type="text" maxlength="150" required value="${esc(q.left)}"></label><label class="field">Đáp án bên phải<input name="right" type="text" maxlength="150" required value="${esc(q.right)}"></label><label class="field">Đáp án đúng<select name="correct"><option value="0" ${q.correct===0?'selected':''}>Bên trái</option><option value="1" ${q.correct===1?'selected':''}>Bên phải</option></select></label><div class="row"><button class="primary" type="submit">${icon('save')} Lưu câu hỏi</button><button class="secondary" type="button" id="cancel-q">Hủy</button></div></form>`;document.body.append(d);d.showModal();d.querySelector('#cancel-q').onclick=()=>d.close();d.onclose=()=>d.remove();d.querySelector('form').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),q={id:questionId(),text:f.get('text').trim(),left:f.get('left').trim(),right:f.get('right').trim(),correct:Number(f.get('correct'))};if(!validQuestions([q]))return toast('Vui lòng điền đủ câu hỏi và hai đáp án.');if(i<0){if(questions.length>=300)return toast('Tối đa 300 câu hỏi.');questions.push(q)}else questions[i]=q;saveQuestions();d.close();renderQuestions()}}
 function start(){tilt.reset();if(!canStart()){if(view!=='home')go('home');camStatus(!cameraReady?'① Bật camera để bắt đầu.':!modelReady?'Đang chuẩn bị nhận diện khuôn mặt…':'② Nhấn HIỆU CHỈNH trước khi bắt đầu.');return}if(!questions.length){go('questions');return toast('Hãy thêm ít nhất một câu hỏi trước khi chơi.')}round=questions.map(q=>({...q}));if(settings.shuffle)for(let i=round.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[round[i],round[j]]=[round[j],round[i]]}cancelCelebration();completedQuestions=0;index=0;score=0;locked=false;awaitingCenter=false;feedback='';selected=-1;view='play';render();prepareQuestionInput();unlockSound();if(musicEnabled&&musicUrl){audio.currentTime=0;playMusic()}startTimer();window.scrollTo(0,0)}
-function journey(){return `<div class="magic-journey" aria-label="Con đường những bục phép thuật"><div id="journey-lane" style="--steps:${round.length}"><div class="journey-path" aria-hidden="true"></div><div class="stepping-stones">${round.map((_,i)=>`<span class="journey-stone" data-step="${i}" style="left:${i/round.length*100}%" aria-label="Bục ${i+1}"></span>`).join('')}</div><span id="princess-walker" class="princess-walker" role="img" aria-label="Lọ Lem tóc vàng"><span class="character-sprite cinderella-sprite" aria-hidden="true"></span></span><span id="prince-goal" class="prince-goal" role="img" aria-label="Hoàng tử toàn thân đang chờ"><span class="character-sprite prince-sprite" aria-hidden="true"></span></span><span id="royal-embrace" class="royal-embrace" role="img" aria-label="Hoàng tử đang ôm Lọ Lem" aria-hidden="true"><span class="character-sprite embrace-sprite" aria-hidden="true"></span><span class="embrace-sparkles" aria-hidden="true">✧ ✦ ✧</span></span></div></div>`}
+function journey(){return `<div class="magic-journey" aria-label="Con đường những bục phép thuật"><div id="journey-lane" style="--steps:${round.length}"><div class="journey-path" aria-hidden="true"></div><div class="stepping-stones">${round.map((_,i)=>`<span class="journey-stone" data-step="${i}" style="left:calc(${i/round.length*100}% - ${i/round.length} * var(--meeting-gap))" aria-label="Bục ${i+1}"></span>`).join('')}</div><span id="princess-walker" class="princess-walker" role="img" aria-label="Lọ Lem tóc vàng"><span class="character-sprite cinderella-sprite" aria-hidden="true"></span></span><span id="prince-goal" class="prince-goal" role="img" aria-label="Hoàng tử toàn thân đang chờ"><span class="character-sprite prince-sprite" aria-hidden="true"></span></span><span id="royal-meeting" class="royal-meeting" role="img" aria-label="Lọ Lem và Hoàng tử nắm tay" aria-hidden="true"><span class="meeting-pose holding-hands-pose" aria-hidden="true"></span><span class="meeting-pose hugging-pose" aria-hidden="true"></span><span class="meeting-sparkles" aria-hidden="true">✧ ✦ ✧</span></span></div></div>`}
 
 
 function updateJourney(walking=false){
   const count=completedQuestions,lane=$('#journey-lane');if(!lane)return;
   const progress=Math.min(count/round.length,1),walker=$('#princess-walker');
-  walker.style.left=progress*100+'%';walker.style.transform='none';
+  walker.style.left=`calc(${progress*100}% - ${progress} * var(--meeting-gap))`;walker.style.transform='none';
   walker.title=`Đã hoàn thành ${count}/${round.length} câu hỏi`;
   walker.classList.remove('walking');if(walking){void walker.offsetWidth;walker.classList.add('walking')}
   lane.querySelectorAll('.journey-stone').forEach(el=>{const step=Number(el.dataset.step);el.classList.toggle('passed',step<count);el.classList.toggle('current',step===count)});
@@ -69,7 +69,7 @@ function prepareQuestionInput(){
 }
 
 function startTimer(){clearInterval(timer);remaining=settings.seconds;if(!remaining)return;if($('#timer'))$('#timer').textContent=remaining+'s';timer=setInterval(()=>{if(view!=='play'||locked||calibrating||cameraState==='loading'||(inputMode==='tilt'&&(!hasFace||!calibrated))||document.hidden)return;remaining--;if($('#timer'))$('#timer').textContent=remaining+'s';if(remaining<=0)answer(-1)},1000)}
-function cancelCelebration(){celebrationEpoch++;celebrationTimers.forEach(clearTimeout);celebrationTimers=[];clearTimeout(advance)}
+function cancelCelebration(){celebrationEpoch++;celebrationTimers.forEach(clearTimeout);celebrationTimers=[];clearTimeout(advance);document.body.classList.remove('journey-ending')}
 function celebrationLater(fn,ms){const epoch=celebrationEpoch;celebrationTimers.push(setTimeout(()=>{if(epoch===celebrationEpoch&&view==='play')fn()},ms))}
 function advanceQuestion(){index++;if(index>=round.length)finish();else updateQuestion()}
 function answer(side){
@@ -86,22 +86,50 @@ function answer(side){
 function finish(){
   cancelCelebration();clearInterval(timer);audio.pause();locked=true;
   const lane=$('#journey-lane');if(!lane){showFinale();return}
-  lane.classList.add('journey-embrace');
-  $('#princess-walker').setAttribute('aria-hidden','true');
-  $('#prince-goal').setAttribute('aria-hidden','true');
-  $('#royal-embrace').setAttribute('aria-hidden','false');
-  $('#feedback').textContent='Lọ Lem đã đến bên Hoàng tử!';
-  effect(true);
-  // The completed embrace remains visible for 1.1 seconds before the ending.
-  celebrationLater(showFinale,1100);
+  document.body.classList.add('journey-ending');
+  const walker=$('#princess-walker'),prince=$('#prince-goal'),pair=$('#royal-meeting');
+  const phase=name=>{lane.dataset.meetingPhase=name};
+  phase('run');
+  walker.classList.remove('walking');
+  void walker.offsetWidth;
+  walker.classList.add('walking');
+  walker.style.left='calc(100% - var(--character-size) * .85)';
+  $('#feedback').textContent='Lọ Lem chạy đến bên Hoàng tử…';
+  celebrationLater(()=>{
+    phase('stop');walker.classList.remove('walking');
+    $('#feedback').textContent='Hai người đã gặp nhau!';
+  },650);
+  celebrationLater(()=>{
+    phase('hands');
+    walker.setAttribute('aria-hidden','true');prince.setAttribute('aria-hidden','true');
+    pair.setAttribute('aria-hidden','false');
+    $('#feedback').textContent='Lọ Lem và Hoàng tử nắm tay nhau.';
+  },850);
+  celebrationLater(()=>{
+    phase('approach');
+    $('#feedback').textContent='Hai người tiến lại gần nhau…';
+  },1550);
+  celebrationLater(()=>{
+    phase('hug');pair.setAttribute('aria-label','Hoàng tử ôm Lọ Lem, cả hai đều nhìn thấy rõ');
+    $('#feedback').textContent='Hoàng tử ôm Lọ Lem. Phép màu đã đưa hai người đến bên nhau!';
+    effect(true);
+  },2050);
+  // Hold the completed embrace for 1.1 seconds, then crossfade for 600 ms.
+  celebrationLater(showFinale,3150);
 }
-function showFinale(){stopCamera();view='end';render()}
+function showFinale(){
+  stopCamera();
+  const reveal=()=>{document.body.classList.remove('journey-ending');view='end';render()};
+  if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.startViewTransition(reveal);
+  }else reveal();
+}
 function royalCrown(){return '<svg class="royal-crown" viewBox="0 0 160 62" aria-hidden="true"><g fill="#f3d477" stroke="#a8691f" stroke-width="2"><path d="M42 46 30 19 62 32 80 5 98 32 130 19 118 46Z"/><path d="M43 48Q80 42 117 48L115 56H45Z"/><circle cx="30" cy="17" r="4"/><circle cx="80" cy="5" r="4"/><circle cx="130" cy="17" r="4"/></g><path d="m80 24 7 11-7 10-7-10Z" fill="#315a9d" stroke="#fff9ea"/><g fill="none" stroke="#c9972e" stroke-width="3"><path d="M43 50C17 60 3 38 17 35C28 33 25 46 18 44M117 50C143 60 157 38 143 35C132 33 135 46 142 44"/></g></svg>'}
 function renderEnd(){
  app.innerHTML=`<section class="end royal-finale storybook-ending" aria-label="Cảnh kết truyện Lọ Lem">
  <div class="fairy-dust" aria-hidden="true">${Array.from({length:12},(_,i)=>`<span style="--x:${i<6?4+i*4:76+(i-6)*4}%;--y:${18+(i*13)%60}%;--delay:${i*.37}s">✦</span>`).join('')}</div>
  <div class="finale-heading royal-ribbon">${royalCrown()}<h1>Lọ Lem đã gặp Hoàng tử!</h1><p>Phép màu đã đưa hai người đến bên nhau.</p></div>
- <div class="finale-summary royal-results">${royalCrown()}<div class="result-title">✦ KẾT QUẢ PHÉP MÀU ✦</div>
+ <div class="finale-summary royal-results">${royalCrown()}<div class="result-title">✦ KẾT QUẢ ✦</div>
  <div class="stats" aria-label="Kết quả trò chơi">
  <div class="stat crystal-card crystal-correct"><span class="crystal-label">✓ Đúng</span><strong>${score}</strong></div>
  <div class="stat crystal-card crystal-wrong"><span class="crystal-label">✕ Sai</span><strong>${round.length-score}</strong></div>
@@ -215,4 +243,3 @@ document.addEventListener('keydown',e=>{if(view==='play'&&!e.repeat&&['ArrowLeft
 document.addEventListener('visibilitychange',()=>{if(document.hidden){audio.pause();tilt.reset();poseCalibration.reset();clearHold()}else if(view==='play'&&musicEnabled&&musicUrl)audio.play().catch(()=>toast('Nhấn nút Nhạc để phát tiếp.'))});
 window.addEventListener('pagehide',()=>{audio.pause();stopCamera()});
 document.querySelectorAll('[data-icon]').forEach(b=>b.innerHTML=icon(b.dataset.icon)+b.innerHTML);$('.brand').onclick=e=>{e.preventDefault();go('home')};saveSettings();restoreMusic();render();
-
