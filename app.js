@@ -58,7 +58,7 @@ function updateJourney(walking=false){
   const layout=journeyLayout(round.length,index,viewport.clientWidth,size);
   strip.style.width=layout.stripWidth+'px';
   lane.style.setProperty('--stone-width',layout.stoneWidth+'px');
-  lane.style.setProperty('--path-inset',layout.padding+'px');
+  lane.style.setProperty('--path-inset',(layout.scrollLeft>0?0:layout.padding)+'px');
   const changed=lane.dataset.currentStep!==String(layout.currentStep);
   lane.dataset.currentStep=layout.currentStep;
   walker.dataset.pedestalIndex=layout.currentStep;
