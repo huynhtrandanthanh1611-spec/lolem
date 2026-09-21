@@ -370,7 +370,7 @@ body[data-screen="play"].journey-ending>main{
 [data-meeting-phase="hug"] .royal-meeting{opacity:1}
 [data-meeting-phase="hands"] .princess-walker,[data-meeting-phase="hands"] .prince-goal,
 [data-meeting-phase="approach"] .princess-walker,[data-meeting-phase="approach"] .prince-goal,
-[data-meeting-phase="hug"] .princess-walker,[data-meeting-phase="hug"] .prince-goal{opacity:0}
+[data-meeting-phase="hug"] .princess-walker,[data-meeting-phase="hug"] .prince-goal{opacity:0;visibility:hidden}
 [data-meeting-phase="approach"] .holding-hands-pose,[data-meeting-phase="hug"] .holding-hands-pose{opacity:0;translate:6% 0}
 [data-meeting-phase="approach"] .hugging-pose,[data-meeting-phase="hug"] .hugging-pose{opacity:1}
 .meeting-sparkles{position:absolute;inset:0;display:grid;place-items:center;color:#b98725;font-size:20px;opacity:0}
@@ -411,3 +411,52 @@ body[data-screen="end"] .storybook-ending .end-buttons button{
 body[data-screen="end"] .storybook-ending .crystal-card strong{
   font-family:"Be Vietnam Pro",sans-serif;font-weight:700;text-shadow:none;
 }
+
+/* Opening scene: one full-bleed palace, with live controls above it. */
+body[data-screen="home"]{margin:0;padding:0;width:100vw;height:100dvh;min-height:100vh;overflow:hidden}
+body[data-screen="home"]>main#app{position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;min-height:100vh;margin:0;padding:0;display:block;overflow:hidden}
+body[data-screen="home"]>header{position:fixed;top:10px;right:14px;left:auto;z-index:10;width:auto;height:auto;min-height:0;max-width:none;margin:0;padding:0;border:0;background:none}
+body[data-screen="home"]>header .brand{display:none}
+body[data-screen="home"]>header nav{gap:4px}
+body[data-screen="home"]>header .nav{font-family:"Be Vietnam Pro",sans-serif;font-size:11px;font-weight:500;padding:7px 10px;color:#684817;border:1px solid #d9bb76;background:#fff8e9ed;border-radius:20px;box-shadow:0 2px 8px #3b230d22}
+body[data-screen="home"]>header .nav svg{width:14px;height:14px}
+.opening-scene.setup-lobby{position:fixed;inset:0;display:block;width:100vw;height:100dvh;min-height:100vh;padding:0;margin:0;overflow:hidden;font-family:"Be Vietnam Pro",sans-serif;isolation:isolate}
+.opening-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;z-index:-2;animation:opening-fade .5s ease both}
+.opening-shade{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#15234b18,transparent 27%,transparent 65%,#2515351a)}
+.opening-scene .setup-title{position:absolute;top:clamp(44px,5dvh,70px);left:50%;translate:-50% 0;width:max-content;max-width:94vw;padding:7px clamp(18px,3vw,48px) 12px;text-align:center;border:1px solid #ddbd70;border-radius:48% 48% 30% 30% / 24% 24% 30% 30%;background:linear-gradient(100deg,#fff7e6e8,#fffdf1f5,#fff6e6e8);box-shadow:0 4px 16px #59390820;animation:opening-fade .5s .25s ease both}
+.opening-ornament{display:block;color:#b78730;font-size:19px;line-height:1.1;letter-spacing:8px}
+.opening-scene .setup-title h1{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:clamp(27px,3.05vw,52px);letter-spacing:.025em;line-height:1.2;margin:1px 0 5px;color:#9a6418;text-shadow:none;filter:none;transform:none}
+.opening-scene .setup-title p{font-size:clamp(11px,1vw,16px);font-weight:500;color:#314d78;line-height:1.4;margin:0}
+.opening-guide{position:absolute;bottom:clamp(18px,3dvh,40px);left:50%;translate:-50% 0;width:clamp(620px,60vw,950px);max-width:calc(100vw - 28px);padding:clamp(10px,1.3dvh,18px) clamp(18px,2vw,30px);border:1px solid #cfa653;border-radius:32px 32px 40px 40px;background:linear-gradient(110deg,#fff5e2f7,#fffdf3fa 50%,#fff1dbf7);box-shadow:inset 0 0 0 4px #fff9ee,inset 0 0 0 5px #dfc28b,0 8px 28px #31213c30;animation:opening-panel .5s .45s ease both}
+.opening-guide .poses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto;gap:16px;width:min(100%,460px);height:auto;min-height:0;margin:0 auto 7px}
+.opening-guide .pose{display:block;container-type:normal;min-height:0;text-align:center;animation:opening-fade .4s .7s ease both}
+.opening-guide .pose:nth-child(2){animation-delay:.8s}.opening-guide .pose:nth-child(3){animation-delay:.9s}
+.opening-guide .pose-art{width:clamp(54px,8.5dvh,90px);height:clamp(54px,8.5dvh,90px);max-width:100%;aspect-ratio:1;margin:auto;background-image:url('./assets/royal-poses-v10.webp');background-size:300% 100%;background-repeat:no-repeat;border-radius:0}
+.opening-guide .pose-0{background-position:left center}.opening-guide .pose-1{background-position:center}.opening-guide .pose-2{background-position:right center}
+.opening-guide .pose span{display:block;font-size:clamp(10px,1.3dvh,13px);line-height:1.3;font-weight:500;color:#695335;margin-top:2px;max-width:none;text-align:center}
+.opening-guide .setup-controls{display:flex;flex-direction:column;align-items:center;gap:7px}
+.opening-guide .mode-choice{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:12px;margin:0}
+.opening-guide .mode-choice button{display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;min-height:56px;padding:6px 10px;background:transparent;border:1px solid transparent;border-radius:16px;box-shadow:none;color:#675239;font-weight:500}
+.opening-guide .mode-choice button+button{border-left-color:#dcc595}
+.opening-guide .mode-choice button[aria-pressed=true]{background:#f7e5bb80;border-color:#c8a15a;color:#72501c;box-shadow:none}
+.opening-guide .mode-choice strong{font-size:clamp(12px,1.6dvh,16px);font-weight:600;letter-spacing:.06em}
+.opening-guide .mode-choice span{font-size:clamp(10px,1.35dvh,13px);line-height:1.4;font-weight:500}
+.opening-camera-row{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:0}
+.opening-camera-actions{display:grid;justify-items:center;gap:6px;max-width:100%}
+.opening-guide #camera-status{font-size:clamp(10px,1.3dvh,13px);font-weight:500;min-height:0;line-height:1.4;color:#455e77;max-width:100%}
+.opening-guide .camera-controls{width:360px;max-width:100%;gap:8px}
+.opening-guide .camera-controls button{min-height:32px;padding:5px 9px;border-color:#d8bd80;border-radius:18px;background:#fff8e9;color:#6e542c;font-size:11px;font-weight:500}
+.opening-guide .camera-controls svg{width:16px;height:16px}
+.opening-guide .setup-mirror{display:none;width:64px;height:86px;flex:none;overflow:visible}
+.opening-scene.camera-active .setup-mirror{display:block}
+.opening-guide .setup-mirror>.mirror-column{display:grid;width:100%;height:100%;container-type:size}
+.opening-guide .magic-mirror{width:60px;height:84px;max-width:none;max-height:none}
+.opening-guide #camera-placeholder{font-size:7px;gap:0}.opening-guide #camera-placeholder svg{width:15px;height:15px}
+.opening-guide .setup-controls>.primary{min-height:42px;width:auto;max-width:100%;padding:10px 30px;border:2px solid #dfb85f;border-radius:32px;background:linear-gradient(180deg,#548cce 0,#205d9e 48%,#123c76 100%);box-shadow:inset 0 1px #e7f1ffa1,0 3px 0 #9c702a,0 4px 10px #28416225;color:#fff8e8;font-size:clamp(12px,1.6dvh,16px);font-weight:600;letter-spacing:.04em;animation:opening-fade .35s .9s ease both}
+.opening-guide .camera-error{font-size:11px;line-height:1.3;margin:0}
+.opening-scene.touch-mode .setup-mirror{display:none}
+@keyframes opening-fade{from{opacity:0}to{opacity:1}}
+@keyframes opening-panel{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-height:800px){.opening-guide{padding:9px 20px;bottom:18px}.opening-guide .pose-art{width:54px;height:54px}.opening-guide .poses{margin-bottom:4px}.opening-guide .setup-controls{gap:5px}.opening-guide .mode-choice button{min-height:48px;padding:4px 8px}.opening-guide .setup-controls>.primary{min-height:38px;padding:8px 24px}.opening-scene .setup-title{padding-top:5px;padding-bottom:8px}.opening-ornament{font-size:15px}}
+@media(max-width:700px){body[data-screen="home"]>header{top:8px;right:8px}.opening-scene .setup-title{top:50px;max-width:95vw;padding:8px 12px}.opening-scene .setup-title h1{font-size:clamp(21px,5vw,32px)}.opening-scene .setup-title p{font-size:10px}.opening-guide{width:calc(100vw - 24px);padding:10px 14px;bottom:12px;border-radius:24px}.opening-guide .poses{gap:8px}.opening-guide .mode-choice{gap:5px}.opening-guide .mode-choice span{font-size:10px}.opening-background{object-position:38% 40%}}
+@media(prefers-reduced-motion:reduce){.opening-background,.opening-scene .setup-title,.opening-guide,.opening-guide .pose,.opening-guide .setup-controls>.primary{animation:none}}
