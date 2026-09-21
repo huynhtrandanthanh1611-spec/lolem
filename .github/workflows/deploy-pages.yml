@@ -36,6 +36,7 @@ jobs:
           unzip -q "$ZIP_FILE" -d _site
           cp index.html _site/index.html
           cp app.js _site/app.js
+          cp journey-layout.js _site/journey-layout.js
           cp style.css _site/style.css
           cp royal-characters-v6.webp _site/assets/royal-characters-v6.webp
           cp royal-meeting-v9.webp _site/assets/royal-meeting-v9.webp

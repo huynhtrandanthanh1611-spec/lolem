@@ -467,3 +467,32 @@ body[data-screen="home"]>header .nav svg{width:14px;height:14px}
 @media(max-width:700px){body[data-screen="home"]>header{top:8px;right:8px}body[data-screen="home"]>header .nav{font-size:10px;padding:7px}body[data-screen="home"]>header .nav svg{display:none}.opening-scene .setup-title{top:8px;left:8px;max-width:46vw;padding:7px 9px;gap:5px;border-radius:14px}.opening-scene .setup-title h1{font-size:clamp(12px,2.4vw,17px);letter-spacing:.01em}.opening-ornament{font-size:17px}.opening-stack{width:calc(100vw - 24px);bottom:12px;gap:9px}.royal-opening-panel{padding:9px 13px;border-radius:20px}.opening-stack .poses{gap:8px}.opening-instructions{gap:8px}.opening-instructions p{font-size:10px}.opening-background{object-position:38% 40%}}
 @media(max-height:540px) and (min-width:700px){.opening-stack{width:min(94vw,1050px);flex-direction:row;align-items:stretch;gap:12px}.opening-guide{flex:1}.opening-startup{flex:1}.opening-stack .pose-art{width:44px;height:44px}.opening-stack .setup-controls{gap:4px}}
 @media(prefers-reduced-motion:reduce){.opening-background,.opening-scene .setup-title,.opening-stack,.opening-stack .pose,.opening-stack .setup-controls>.primary{animation:none}}
+
+/* Compact instructions: portraits on the left, short descriptions on the right. */
+.opening-stack{width:clamp(600px,56vw,820px)}
+.opening-guide{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:5px 18px;padding:10px 18px}
+.opening-guide h2{grid-column:1/-1;font-size:12px;margin:0 0 2px}
+.opening-guide .poses{grid-column:1;grid-row:2;width:100%;margin:0;gap:7px;align-items:center}
+.opening-guide .pose-art{width:clamp(44px,5.7dvh,60px);height:clamp(44px,5.7dvh,60px)}
+.opening-guide .pose span{font-size:10px;line-height:1.25}
+.opening-instructions{grid-column:2;grid-row:2;display:flex;flex-direction:column;justify-content:center;gap:7px;text-align:left;padding-left:15px;border-left:1px solid #d9bf86}
+.opening-instructions>div+div{border-left:0;border-top:1px solid #e6d5b2;padding-top:6px}
+.opening-instructions strong{font-size:11px;line-height:1.2}
+.opening-instructions p{font-size:11px;line-height:1.3;margin:2px 0 0}
+.opening-startup{padding:9px 18px}
+.opening-startup .setup-controls{gap:5px}
+.opening-startup .mode-choice{width:min(100%,300px);gap:8px}
+.opening-startup .mode-choice button{min-height:28px;padding:4px 12px;font-size:11px}
+/* A fixed destination and tail remain visible even for a long scrolling route. */
+#journey-lane{--meeting-gap:clamp(78px,11vw,136px);--path-inset:48px}
+.pedestal-viewport{position:absolute;left:0;right:var(--meeting-gap);top:0;height:100%;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-x:contain}
+.pedestal-viewport::-webkit-scrollbar{display:none}
+.pedestal-strip{position:relative;height:100%;min-width:100%}
+.journey-stone{width:var(--stone-width,24px);top:78%;transform:translate(-50%,-50%);opacity:1}
+.journey-path{left:var(--path-inset);right:var(--meeting-gap);top:78%;height:3px;transform:translateY(-50%)}
+.journey-tail{position:absolute;left:calc(100% - var(--meeting-gap));right:0;top:78%;height:3px;transform:translateY(-50%);border-radius:2px;background:#dfbd73;box-shadow:0 0 4px #f3d47744;z-index:0}
+.princess-walker{bottom:calc(22% + 6px)}
+.journey-ending .princess-walker{bottom:22%}
+@media(max-width:700px){.opening-stack{width:calc(100vw - 24px)}.opening-guide{gap:4px 9px;padding:9px 12px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.opening-guide .pose-art{width:40px;height:40px}.opening-guide .pose span{font-size:9px}.opening-instructions{padding-left:9px;gap:5px}.opening-instructions p{font-size:10px}.opening-instructions strong{font-size:10px}}
+@media(max-width:480px){body[data-screen="home"]>header{top:54px}}
+@media(max-height:540px) and (min-width:700px){.opening-stack{width:min(94vw,1050px)}.opening-guide{grid-template-columns:1fr}.opening-guide .poses{grid-row:2}.opening-instructions{grid-column:1;grid-row:3;flex-direction:row;padding-left:0;border:0;gap:10px}.opening-instructions>div+div{border-top:0;border-left:1px solid #e6d5b2;padding:0 0 0 10px}}
