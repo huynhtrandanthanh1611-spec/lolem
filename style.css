@@ -275,8 +275,11 @@ body[data-screen="end"] .storybook-ending .royal-results {
 
 /* Refined royal typography: one serif display face and the existing light UI sans. */
 body[data-screen="end"] .storybook-ending .finale-heading {
-  top:3.2%;
-  width:min(72vw,1080px);
+  top:5%;
+  left:3%;
+  transform:none;
+  animation:ending-fade .65s ease-out both;
+  width:36vw;
   padding:clamp(8px,1.15dvh,16px) 24px;
   border-width:1.5px;
   border-radius:48% 48% 20% 20% / 22% 22% 26% 26%;
@@ -284,7 +287,7 @@ body[data-screen="end"] .storybook-ending .finale-heading {
 }
 body[data-screen="end"] .storybook-ending .finale-heading h1 {
   font-family:"Cormorant Garamond",Georgia,"Times New Roman",serif;
-  font-size:clamp(31px,3.55vw,58px);
+  font-size:clamp(25px,2.5vw,48px);
   font-weight:600;
   letter-spacing:.018em;
   line-height:1.03;
@@ -300,7 +303,7 @@ body[data-screen="end"] .storybook-ending .finale-heading h1 {
 }
 body[data-screen="end"] .storybook-ending .finale-heading p {
   font-family:Nunito,ui-rounded,system-ui,sans-serif;
-  font-size:clamp(14px,1.45vw,22px);
+  font-size:clamp(13px,1.15vw,20px);
   font-weight:500;
   letter-spacing:.025em;
   line-height:1.22;
@@ -346,4 +349,3 @@ body[data-screen="end"] .storybook-ending .end-buttons button {
   padding:8px 14px;
   font-size:clamp(13px,1.25vw,19px);
 }
-
