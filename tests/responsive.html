@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi">
+<meta charset="utf-8">
+<title>Kiểm tra kích thước giao diện</title>
+<meta name="robots" content="noindex">
+<style>
+  body{margin:0;background:#e6e9ed;font:14px system-ui}
+  label{display:block;position:sticky;top:0;z-index:1;padding:10px;background:#fff}
+  select{font:inherit;margin-left:8px}
+  iframe{display:block;border:0;margin:0;background:#fff}
+</style>
+<label>Kích thước kiểm tra<select id="viewport">
+  <option value="1366,768">1366 × 768</option>
+  <option value="1600,900">1600 × 900</option>
+  <option value="1920,1080">1920 × 1080</option>
+  <option value="390,844">390 × 844</option>
+</select></label>
+<iframe title="Giao diện trò chơi" src="../index.html?v=20260922-review-13" width="1366" height="768"></iframe>
+<script>
+  document.querySelector('select').addEventListener('change',event=>{
+    const [width,height]=event.target.value.split(',');
+    const frame=document.querySelector('iframe');
+    frame.width=width;frame.height=height;
+  });
+</script>
+</html>
