@@ -48,25 +48,20 @@ function renderHome(){
     <img class="opening-background" src="./assets/royal-opening-v10.webp" alt="Lọ Lem tóc vàng bước vào đại sảnh, nhìn về Hoàng tử ở cuối cầu thang">
     <div class="opening-shade" aria-hidden="true"></div>
     <div class="setup-title"><span class="opening-ornament" aria-hidden="true">♛</span><h1>PHÉP MÀU THẦN TIÊN</h1></div>
-    <div class="opening-stack">
-      <section class="opening-guide royal-opening-panel" aria-labelledby="opening-guide-title">
-        <h2 id="opening-guide-title">✦ HƯỚNG DẪN CHƠI ✦</h2>
-        <div class="opening-instructions">
-          <div><strong>NGHIÊNG ĐẦU</strong><p>Nghiêng trái hoặc phải để chọn đáp án.</p></div>
-          <div><strong>CHẠM</strong><p>Chạm trực tiếp vào đáp án để lựa chọn.</p></div>
-        </div>
+      <section class="opening-guide royal-opening-panel" aria-label="Ba tư thế nghiêng đầu">
         <div class="poses">${['Nghiêng trái','Giữ đầu ở giữa','Nghiêng phải'].map((t,i)=>`<div class="pose"><div class="pose-art pose-${i}" role="img" aria-label="Lọ Lem ${i===1?'giữ đầu thẳng':i===0?'nghiêng đầu sang trái':'nghiêng đầu sang phải'}"></div><span>${t}</span></div>`).join('')}</div>
       </section>
+    <div class="opening-stack">
       <section class="opening-startup royal-opening-panel" aria-label="Khởi động và hiệu chỉnh">
         <div class="setup-controls">
           <div class="mode-choice" role="group" aria-label="Chọn kiểu chơi"><button data-action="mode-tilt" aria-pressed="${inputMode==='tilt'}">NGHIÊNG ĐẦU</button><button data-action="mode-touch" aria-pressed="${inputMode==='touch'}">CHẠM</button></div>
           <div class="opening-camera-row test-mirror-section">
             <div class="setup-mirror">${mirror()}</div>
-            <div class="opening-camera-actions">
+          </div>
+          <div class="opening-camera-actions">
               <div id="camera-status" role="status">${inputMode==='touch'?'Chạm đáp án hoặc dùng phím ← →':calibrated?'Đã sẵn sàng! Bắt đầu hành trình thôi!':'Bật camera và hiệu chỉnh để chơi bằng nghiêng đầu.'}</div>
               <div id="camera-error" class="camera-error" hidden></div>
               <button class="secondary retry-calibration" data-action="retry-calibration" hidden>🔄 THỬ LẠI</button>
-            </div>
           </div>
           ${cameraControls()}
           ${btn('BẮT ĐẦU HÀNH TRÌNH','start','play','primary')}
