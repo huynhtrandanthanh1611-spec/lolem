@@ -64,7 +64,7 @@ body[data-screen="home"]>header .nav svg{width:14px;height:14px}
   .opening-scene .setup-title{top:8px;left:8px;max-width:46vw;padding:7px 9px;gap:5px;border-radius:14px}
   .opening-scene .setup-title h1{font-size:clamp(12px,2.4vw,17px);letter-spacing:.01em}
   .opening-ornament{font-size:17px}
-  .opening-background{object-position:38% 40%}
+  .opening-background{object-position:24% 40%}
   .opening-scene .opening-guide{right:12px;top:104px;translate:none;width:132px;padding:10px}
   .opening-guide .poses{gap:10px}
   .opening-guide .pose-art{width:52px;height:52px}
