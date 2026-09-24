@@ -182,8 +182,8 @@ body[data-screen="end"] .storybook-ending{display:block;padding:0;background:#26
 @media(prefers-reduced-motion:reduce){.storybook-ending *{animation:none!important;transition:none!important}}
 
 /* Matching transparent full-body character sheet: Cinderella, prince, embrace. */
-/* Reserve the largest meeting pose from question one: no final-state reflow. */
-body[data-screen=play]>main{--journey-stage-height:clamp(158px,23dvh,242px);grid-template-rows:auto var(--journey-stage-height) minmax(0,1fr) clamp(64px,10dvh,90px)}
+/* Keep the original compact journey height and one character size for every phase. */
+body[data-screen=play]>main{--journey-stage-height:clamp(88px,12dvh,116px);grid-template-rows:auto var(--journey-stage-height) minmax(0,1fr) clamp(64px,10dvh,90px)}
 .magic-journey{--journey-y:78%;height:var(--journey-stage-height);min-height:var(--journey-stage-height);flex:0 0 auto;align-self:start;margin:0 auto;display:block}
 #journey-lane{--character-size:clamp(66px,9dvh,86px);left:clamp(35px,5vw,62px);right:clamp(42px,5vw,68px)}
 .journey-path{position:absolute;left:0;right:0;top:var(--journey-y);height:3px;border-radius:999px;background:linear-gradient(90deg,#e7c477,#f7e7b5,#dcb663);box-shadow:0 0 5px #f3d47755;z-index:0}
@@ -209,7 +209,7 @@ body[data-screen=play]>main{--journey-stage-height:clamp(158px,23dvh,242px);grid
 @keyframes embrace-dust{0%{opacity:0;translate:0 5px}30%{opacity:1}100%{opacity:0;translate:0 -8px}}
 .pose-art{background-image:url('./assets/royal-characters-v6.webp');background-size:300% 100%;background-position:0 50%}
 .pose-0{transform:rotate(-10deg)}.pose-1{transform:none}.pose-2{transform:rotate(10deg)}
-@media(max-height:480px){body[data-screen=play]>main{grid-template-rows:30px var(--journey-stage-height) minmax(0,1fr) 44px}#journey-lane{--character-size:54px}}
+@media(max-height:480px){body[data-screen=play]>main{--journey-stage-height:66px;grid-template-rows:30px var(--journey-stage-height) minmax(0,1fr) 44px}#journey-lane{--character-size:54px}}
 @media(prefers-reduced-motion:reduce){.princess-walker,.royal-embrace,.prince-goal{transition:none}.princess-walker.walking .character-sprite{animation:none}}
 
 /* Give the embrace a real accessible box, matching its visible sprite. */
@@ -356,7 +356,6 @@ body[data-screen="end"] .storybook-ending .end-buttons button {
 #journey-lane{--meeting-gap:calc(var(--character-size) * 1.6)}
 .journey-path{right:0}
 .princess-walker{z-index:4}
-.journey-ending #journey-lane{--character-size:clamp(112px,18dvh,188px)}
 .journey-ending .princess-walker{transition:left .65s ease-in-out,opacity .18s ease}
 .journey-ending .princess-walker.walking .character-sprite{animation:golden-step .3s ease-in-out infinite}
 .royal-meeting{position:absolute;right:calc(var(--character-size) * -.26);bottom:22%;width:calc(var(--character-size) * 1.136);height:var(--character-size);z-index:5;opacity:0;pointer-events:none}
