@@ -27,31 +27,31 @@ body[data-screen="home"]>header .nav svg{width:14px;height:14px}
 /* Independent controls below the palace scene. */
 .opening-stack{position:absolute;bottom:clamp(18px,2.5dvh,28px);left:50%;translate:-50% 0;width:clamp(560px,52vw,800px);max-width:calc(100vw - 28px);display:block}
 .opening-startup{position:relative;padding:12px 18px}
-.opening-startup .setup-controls{display:flex;flex-direction:column;align-items:stretch;gap:8px;min-width:0}
-.opening-startup .mode-choice{display:grid;grid-template-columns:1fr 1fr;width:min(100%,380px);gap:10px;margin:0 auto}
+.opening-startup .setup-controls{display:grid;grid-template-columns:minmax(0,38fr) minmax(0,62fr);grid-template-rows:auto minmax(auto,1fr) auto auto;align-items:center;justify-items:stretch;column-gap:clamp(14px,2vw,28px);row-gap:10px;min-width:0;min-height:clamp(212px,27dvh,286px)}
+.opening-startup .mode-choice{grid-column:2;grid-row:1;display:grid;grid-template-columns:1fr 1fr;width:100%;gap:10px;margin:0}
 .opening-startup .mode-choice button{display:flex;align-items:center;justify-content:center;min-height:34px;padding:6px 14px;border:1px solid #d9b75a;border-radius:18px;background:#fffaf0;color:#244f7c;font-family:inherit;font-size:12px;font-weight:600;line-height:1.3;box-shadow:inset 0 1px #fff}
-.opening-startup .mode-choice button[aria-pressed="true"]{background:linear-gradient(#4b8fd8,#2e6fbb);color:#fff;border-color:#f2d477;box-shadow:inset 0 1px #ffffff80,0 2px 5px #2b6db526}
-.opening-startup .test-mirror-section{display:block;position:relative;width:100%;max-width:none;min-width:0;height:clamp(150px,18dvh,210px);min-height:0;padding:0;margin:0;box-sizing:border-box}
-.opening-startup .setup-mirror,.opening-scene.camera-active .setup-mirror{display:block;width:100%;height:100%;max-width:none;margin:0;aspect-ratio:auto;overflow:visible}
-.opening-startup .setup-mirror>.mirror-column{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0;container-type:normal}
+.opening-startup .mode-choice button[aria-pressed="true"]{background:linear-gradient(#62a9ee,#397fcc);color:#fff;border-color:#f2d477;box-shadow:inset 0 1px #ffffff80,0 2px 5px #2b6db526}
+.opening-startup .test-mirror-section{grid-column:1;grid-row:1/5;align-self:stretch;display:block;position:relative;width:100%;max-width:none;min-width:0;height:auto;min-height:0;padding:0;margin:0;box-sizing:border-box}
+.opening-startup .setup-mirror,.opening-scene.camera-active .setup-mirror{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;margin:0;aspect-ratio:auto;overflow:visible}
+.opening-startup .setup-mirror>.mirror-column{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0;container-type:size}
 /* Scale the original baroque frame by height; its oval camera inset comes from style.css. */
-.opening-startup .magic-mirror{width:auto;height:calc(100% - 4px);aspect-ratio:1064/1478;max-width:100%;max-height:100%}
+.opening-startup .magic-mirror{width:auto;height:min(calc(100cqh - 4px),138.91cqw);aspect-ratio:1064/1478;max-width:100%;max-height:100%}
 .opening-startup .camera-circle video{width:100%;height:100%;object-fit:cover;object-position:center;transform:scaleX(-1);opacity:1;filter:none}
 .opening-startup .mirror-spark{font-size:17px;line-height:1;color:#d3a44b}
 .opening-startup #camera-placeholder{font-size:clamp(10px,1.3dvh,12px);font-weight:500;line-height:1.35;gap:clamp(3px,.5dvh,6px);color:#4c7197}
 .opening-startup #camera-placeholder svg{width:clamp(18px,2.8dvh,28px);height:clamp(18px,2.8dvh,28px)}
-.opening-startup .opening-camera-actions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;max-width:none;text-align:center}
+.opening-startup .opening-camera-actions{grid-column:2;grid-row:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;max-width:none;text-align:center}
 .opening-startup #camera-status{font-size:12px;font-weight:500;line-height:1.4;min-height:0;max-width:100%;color:#375f87;overflow-wrap:anywhere}
 .opening-startup .camera-error{font-size:12px;line-height:1.35;margin:0;max-width:100%}
-.opening-startup .camera-controls{width:min(100%,460px);margin:0 auto;gap:10px}
-.opening-startup .camera-controls button{min-height:34px;padding:7px 12px;border:1px solid #d9b75a;border-radius:18px;background:linear-gradient(#f5fbff,#deefff);color:#244f7c;font-size:12px;font-weight:500;box-shadow:inset 0 1px #fff}
+.opening-startup .camera-controls{grid-column:2;grid-row:3;display:grid;grid-template-columns:1fr 1fr;width:100%;margin:0;gap:10px}
+.opening-startup .camera-controls button{min-width:0;min-height:34px;padding:7px 8px;border:1px solid #d9b75a;border-radius:18px;background:linear-gradient(#fffdf2,#e9f4ff);color:#244f7c;font-size:12px;font-weight:500;gap:6px;box-shadow:inset 0 1px #fff}
 .opening-startup .camera-controls button.step-done{background:linear-gradient(#8fcfff,#5ea7e4);border-color:#d9b75a;color:#123e6b;box-shadow:inset 0 1px #fff9}
 .opening-startup .camera-controls svg{width:17px;height:17px}
-.opening-startup .setup-controls>.primary{align-self:center;width:auto;max-width:100%;min-height:40px;padding:8px 28px;border:2px solid #f2d477;border-radius:24px;background:linear-gradient(#4b8fd8,#2e6fbb);box-shadow:inset 0 1px #ffffffa1,0 2px 0 #c19a40,0 3px 9px #28416220;color:#fff;font-size:clamp(12px,1.4dvh,16px);font-weight:600;letter-spacing:.025em;animation:none}
+.opening-startup .setup-controls>.primary{grid-column:2;grid-row:4;align-self:center;width:100%;min-width:0;max-width:100%;min-height:40px;padding:8px 14px;border:2px solid #f2d477;border-radius:24px;background:linear-gradient(#62a9ee,#3b83d3);box-shadow:inset 0 1px #ffffffa1,0 2px 0 #c19a40,0 3px 9px #28416220;color:#fff;font-size:clamp(12px,1.4dvh,16px);font-weight:600;line-height:1.3;letter-spacing:.025em;animation:none}
 .opening-startup .camera-controls button:disabled{opacity:.68;background:#eaf5ff;color:#456b91;border-color:#d9b75a;box-shadow:none}
-.opening-startup .setup-controls>.primary:disabled{opacity:.7}
+.opening-startup .setup-controls>.primary:disabled{opacity:.8}
 .opening-startup .setup-controls button:focus-visible{outline:3px solid #245f9f;outline-offset:3px}
-.opening-scene.touch-mode .test-mirror-section{display:none}
+.opening-scene.touch-mode .camera-controls{display:none}
 
 @media(max-width:700px){
   body[data-screen="home"]>header{top:8px;right:8px}
@@ -68,17 +68,24 @@ body[data-screen="home"]>header .nav svg{width:14px;height:14px}
   .opening-guide .pose span{font-size:10px}
   .opening-stack{width:calc(100vw - 24px);bottom:16px}
   .opening-startup{padding:10px 12px}
-  .opening-startup .setup-controls{gap:7px}
-  .opening-startup .test-mirror-section{height:140px}
+  .opening-startup .setup-controls{grid-template-columns:minmax(0,42fr) minmax(0,58fr);min-height:clamp(176px,46vw,218px);column-gap:10px;row-gap:7px}
   .opening-startup .camera-controls button{font-size:11px;padding:6px 8px}
   .opening-startup #camera-status{font-size:11px}
 }
-@media(max-width:480px){body[data-screen="home"]>header{top:54px}}
+@media(max-width:480px){
+  body[data-screen="home"]>header{top:54px}
+  .opening-startup .mode-choice{gap:6px}
+  .opening-startup .mode-choice button{font-size:10px;min-height:32px;padding:5px 4px}
+  .opening-startup .camera-controls{gap:6px}
+  .opening-startup .camera-controls button{font-size:10.5px;min-height:34px;padding:6px 4px;line-height:1.25}
+  .opening-startup .camera-controls svg{display:none}
+  .opening-startup .setup-controls>.primary{font-size:11px;padding:7px 6px;gap:5px;letter-spacing:0}
+  .opening-startup .setup-controls>.primary svg{width:16px;height:16px}
+}
 @media(max-height:600px) and (min-width:701px){
   .opening-stack{width:min(58vw,760px);bottom:12px}
   .opening-startup{padding:8px 14px}
-  .opening-startup .setup-controls{gap:5px}
-  .opening-startup .test-mirror-section{height:105px}
+  .opening-startup .setup-controls{min-height:176px;column-gap:12px;row-gap:7px}
   .opening-startup .mode-choice button,.opening-startup .camera-controls button{min-height:30px;padding:5px 10px;font-size:11px}
   .opening-startup .setup-controls>.primary{min-height:34px;padding:6px 22px}
   .opening-scene .opening-guide{top:46%;width:142px;padding:10px}
