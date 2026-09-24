@@ -33,17 +33,13 @@ body[data-screen="home"]>header .nav svg{width:14px;height:14px}
 .opening-startup .mode-choice button[aria-pressed="true"]{background:linear-gradient(#4b8fd8,#2e6fbb);color:#fff;border-color:#f2d477;box-shadow:inset 0 1px #ffffff80,0 2px 5px #2b6db526}
 .opening-startup .test-mirror-section{display:block;position:relative;width:100%;max-width:none;min-width:0;height:clamp(150px,18dvh,210px);min-height:0;padding:0;margin:0;box-sizing:border-box}
 .opening-startup .setup-mirror,.opening-scene.camera-active .setup-mirror{display:block;width:100%;height:100%;max-width:none;margin:0;aspect-ratio:auto;overflow:visible}
-.opening-startup .setup-mirror>.mirror-column{display:grid;place-items:stretch;width:100%;height:100%;min-width:0;min-height:0;container-type:normal}
-.opening-startup .magic-mirror{position:relative;display:block;width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;border:2px solid #d9b75a;border-radius:25px;background:linear-gradient(120deg,#ffefb8,#fffdf1 40%,#e7bd60);box-shadow:inset 0 0 0 2px #fff8e2,0 2px 7px #a07c321c;isolation:isolate}
-.opening-startup .magic-mirror::before{content:"";position:absolute;inset:4px;border:1px solid #b99148;border-radius:20px;pointer-events:none;z-index:2}
-.opening-startup .mirror-column .magic-mirror .camera-circle{position:absolute;inset:8px;width:auto;height:auto;max-width:none;max-height:none;aspect-ratio:auto;border:0;border-radius:16px;overflow:hidden;background:radial-gradient(ellipse at center,#f6fcff,#d8ebf7);box-shadow:none}
-.opening-startup .camera-circle video{display:block;width:100%;height:100%;object-fit:contain;object-position:center;transform:scaleX(-1);opacity:1;filter:none}
-.opening-startup .mirror-frame{display:none}
+.opening-startup .setup-mirror>.mirror-column{display:grid;place-items:center;width:100%;height:100%;min-width:0;min-height:0;container-type:normal}
+/* Scale the original baroque frame by height; its oval camera inset comes from style.css. */
+.opening-startup .magic-mirror{width:auto;height:calc(100% - 4px);aspect-ratio:1064/1478;max-width:100%;max-height:100%}
+.opening-startup .camera-circle video{width:100%;height:100%;object-fit:cover;object-position:center;transform:scaleX(-1);opacity:1;filter:none}
 .opening-startup .mirror-spark{font-size:17px;line-height:1;color:#d3a44b}
-.opening-startup .magic-mirror .spark-one{left:2%;top:38%}
-.opening-startup .magic-mirror .spark-two{right:2%;bottom:30%}
-.opening-startup #camera-placeholder{font-size:13px;font-weight:500;line-height:1.4;gap:7px;color:#4c7197}
-.opening-startup #camera-placeholder svg{width:28px;height:28px}
+.opening-startup #camera-placeholder{font-size:clamp(10px,1.3dvh,12px);font-weight:500;line-height:1.35;gap:clamp(3px,.5dvh,6px);color:#4c7197}
+.opening-startup #camera-placeholder svg{width:clamp(18px,2.8dvh,28px);height:clamp(18px,2.8dvh,28px)}
 .opening-startup .opening-camera-actions{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;max-width:none;text-align:center}
 .opening-startup #camera-status{font-size:12px;font-weight:500;line-height:1.4;min-height:0;max-width:100%;color:#375f87;overflow-wrap:anywhere}
 .opening-startup .camera-error{font-size:12px;line-height:1.35;margin:0;max-width:100%}
