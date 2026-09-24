@@ -52,12 +52,12 @@ function renderHome(){
         <div class="poses">${['Nghiêng trái','Giữ đầu ở giữa','Nghiêng phải'].map((t,i)=>`<div class="pose"><div class="pose-art pose-${i}" role="img" aria-label="Lọ Lem ${i===1?'giữ đầu thẳng':i===0?'nghiêng đầu sang trái':'nghiêng đầu sang phải'}"></div><span>${t}</span></div>`).join('')}</div>
       </section>
     <div class="opening-stack">
+      <div class="opening-camera-row test-mirror-section">
+        <div class="setup-mirror">${mirror()}</div>
+      </div>
       <section class="opening-startup royal-opening-panel" aria-label="Khởi động và hiệu chỉnh">
         <div class="setup-controls">
           <div class="mode-choice" role="group" aria-label="Chọn kiểu chơi"><button data-action="mode-tilt" aria-pressed="${inputMode==='tilt'}">NGHIÊNG ĐẦU</button><button data-action="mode-touch" aria-pressed="${inputMode==='touch'}">CHẠM</button></div>
-          <div class="opening-camera-row test-mirror-section">
-            <div class="setup-mirror">${mirror()}</div>
-          </div>
           <div class="opening-camera-actions">
               <div id="camera-status" role="status">${inputMode==='touch'?'Chạm đáp án hoặc dùng phím ← →':calibrated?'Đã sẵn sàng! Bắt đầu hành trình thôi!':'Bật camera và hiệu chỉnh để chơi bằng nghiêng đầu.'}</div>
               <div id="camera-error" class="camera-error" hidden></div>
