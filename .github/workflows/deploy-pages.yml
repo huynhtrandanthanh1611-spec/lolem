@@ -36,6 +36,8 @@ jobs:
           unzip -q "$ZIP_FILE" -d _site
           cp index.html _site/index.html
           cp app.js _site/app.js
+          cp quiz-share.js _site/quiz-share.js
+          cp sharing.css _site/sharing.css
           cp journey-layout.js _site/journey-layout.js
           cp answer-history.js _site/answer-history.js
           mkdir -p _site/qa
@@ -54,6 +56,7 @@ jobs:
           node --input-type=module --check < _site/rewards.js
           node tests/answer-history.test.mjs
           node tests/journey-layout.test.mjs
+          node tests/quiz-share.test.mjs
           touch _site/.nojekyll
 
       - name: Configure Pages
@@ -67,3 +70,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

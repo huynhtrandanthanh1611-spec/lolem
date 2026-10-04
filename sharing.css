@@ -1,0 +1,27 @@
+/* These styles only affect question sharing and student entry, never the play layout. */
+body[data-student-mode="true"] header [data-view="questions"],
+body[data-student-mode="true"] header [data-view="settings"]{display:none!important}
+.quiz-share-panel{margin:18px 0;padding:18px 22px;border:1px solid #cfa655;border-radius:20px;background:linear-gradient(120deg,#fffdf5,#fff5df);box-shadow:0 4px 14px #8160310c}
+.quiz-share-panel h3{margin:0 0 12px;color:#8b6224;font-family:"Playfair Display",Georgia,serif;font-weight:600}
+.quiz-share-panel .field{margin:10px 0;max-width:580px}
+.quiz-share-panel .field input{width:100%;min-width:0;background:#fffefa;border-color:#dbc28c}
+.quiz-share-panel p{margin:8px 0;font-size:14px;line-height:1.5}
+.quiz-share-panel .share-result{margin-top:12px}
+.quiz-share-panel .share-link-field{max-width:none}
+.quiz-share-panel .share-link-field input{font-size:14px;font-weight:400;color:#315779}
+.share-status{color:#486578;min-height:1.5em}
+.share-status.share-error{color:#a63e47}
+.share-status.share-success{color:#227444}
+.quiz-share-panel button.primary{background:linear-gradient(#3376cb,#2358a8);border:1px solid #d3b26e;color:white;box-shadow:0 3px 0 #174078}
+.quiz-share-panel button.secondary{border:1px solid #d3b26e;background:#fffdf5;color:#275d9e}
+.question-row .question-tools{gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.question-tools .move-up svg{transform:rotate(-90deg)}
+.question-tools .move-down svg{transform:rotate(90deg)}
+.question-tools button:disabled{opacity:.3;cursor:default}
+.shared-quiz-label{margin:0;text-align:center;font-size:clamp(12px,1vw,15px);line-height:1.35;color:#805a20;overflow-wrap:anywhere}
+.shared-quiz-label strong{font-weight:600}
+body[data-screen="loading"] main,body[data-screen="share-error"] main{display:grid;place-items:center;min-height:65vh}
+.share-entry{width:min(90vw,520px);padding:28px;border:1px solid #d2ae67;border-radius:22px;text-align:center;background:#fffaf0;box-shadow:0 8px 30px #85643218}
+.share-entry h2{font-family:"Playfair Display",Georgia,serif;font-size:clamp(22px,4vw,30px);font-weight:600;color:#855e29;margin:0 0 20px}
+.share-entry [role="status"]{font-size:20px;color:#416482;margin:12px 0}
+@media(max-width:600px){.quiz-share-panel{padding:14px}.quiz-share-panel .row{gap:10px}.quiz-share-panel .row button{font-size:13px;padding:10px 12px}.question-tools{max-width:110px}.question-tools .icon-button{width:32px;height:32px;padding:6px}}
