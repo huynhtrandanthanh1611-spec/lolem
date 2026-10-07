@@ -1,6 +1,6 @@
 import {createShareLink,loadSharedQuiz,hasSharedQuiz,questionsFromSnapshot,validQuestions} from './quiz-share.js?v=20261004-share-21';
 import {journeyLayout} from './journey-layout.js';
-import {recordAnswer} from './answer-history.js';
+import {recordAnswer} from './answer-history.js?v=20261007-retry-23';
 import {TiltController,PoseCalibration,TILT_CONFIG,headRoll} from './tilt-controller.js';
 function questionId(){return crypto.randomUUID?.()||Array.from(crypto.getRandomValues(new Uint32Array(4)),n=>n.toString(16).padStart(8,'0')).join('')}
 const $=s=>document.querySelector(s), app=$('#app'), audio=$('#music');
@@ -117,31 +117,37 @@ function updateJourney(walking=false){
 }
 
 function renderPlay(){const q=round[index];app.innerHTML=`<div class="play-top"><div class="play-brand">${logo()}<span>PHÉP MÀU THẦN TIÊN</span></div><span class="badge">Câu <span id="question-count">${index+1}/${round.length}</span></span><div class="play-actions"><button class="icon-button" data-action="toggle-music" id="music-toggle" title="Bật / tắt nhạc nền" aria-label="Bật / tắt nhạc nền"></button><button class="icon-button" data-action="toggle-effects" id="effects-toggle" title="Bật / tắt hiệu ứng" aria-label="Bật / tắt hiệu ứng"></button><button class="icon-button" data-action="fullscreen" title="Toàn màn hình" aria-label="Toàn màn hình">${icon('expand')}</button><button class="icon-button" data-action="home" title="Về trang chủ" aria-label="Về trang chủ">${icon('home')}</button></div><span class="badge score">⭐ <span id="score">${score}</span></span></div>${journey()}<div class="play-field"><section class="question-card"><div class="question-caption">CÂU HỎI ${settings.seconds?'· <span id="timer"></span>':''}</div><div class="text-box"><div class="prompt fit-text" id="prompt">${esc(q.text)}</div></div></section><div class="choices-row"><button class="answer" id="left-answer" data-answer="0" aria-label="Đáp án bên trái: ${esc(q.left)}"><span class="text-box"><span class="value fit-text">${esc(q.left)}</span></span><svg class="hold-ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="96" rx="10" pathLength="100"/></svg></button>${mirror()}<button class="answer right" id="right-answer" data-answer="1" aria-label="Đáp án bên phải: ${esc(q.right)}"><span class="text-box"><span class="value fit-text">${esc(q.right)}</span></span><svg class="hold-ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="96" rx="10" pathLength="100"/></svg></button></div></div><div class="play-bottom"><div id="feedback" class="feedback" aria-live="polite"></div><div class="camera-info"><div class="camera-messages"><strong id="camera-status">${cameraState==='on'?'Đưa đầu về giữa để sẵn sàng':'Bật camera để mở gương thần tiên'}</strong><span id="camera-detail">Chạm đáp án hoặc dùng phím ← → cũng được nhé!</span></div>${cameraControls()}</div></div>`;if(stream){$('#video').srcObject=stream;$('#video').play().catch(()=>{})}updateAudioButtons();updateJourney();updateCameraUI();queueFit()}
-function updateQuestion(){const q=round[index];$('#question-count').textContent=`${index+1}/${round.length}`;$('#prompt').textContent=q.text;['left','right'].forEach((s,i)=>{const b=$('#'+s+'-answer');b.querySelector('.value').textContent=q[s];b.classList.remove('correct','wrong','holding','celebrating-answer');delete b.dataset.feedback;b.style.removeProperty('--answer-zoom');b.setAttribute('aria-label','Đáp án bên '+(i===0?'trái: ':'phải: ')+q[s])});$('#feedback').textContent='';clearHold();prepareQuestionInput();queueFit();startTimer()}
+function clearAnswerFeedback(){const q=round[index];['left','right'].forEach((s,i)=>{const b=$('#'+s+'-answer');b.classList.remove('correct','wrong','holding','celebrating-answer');delete b.dataset.feedback;b.style.removeProperty('--answer-zoom');b.setAttribute('aria-label','Đáp án bên '+(i===0?'trái: ':'phải: ')+q[s])});$('#feedback').textContent='';clearHold()}
+function updateQuestion(){const q=round[index];$('#question-count').textContent=`${index+1}/${round.length}`;$('#prompt').textContent=q.text;['left','right'].forEach(s=>{$('#'+s+'-answer').querySelector('.value').textContent=q[s]});clearAnswerFeedback();prepareQuestionInput();queueFit();startTimer()}
 function setAnswerAvailability(){document.querySelectorAll('.answer').forEach(b=>b.disabled=locked)}
-function prepareQuestionInput(){
-  awaitingCenter=inputMode==='tilt'&&!(hasFace&&tilt.state==='CENTER'&&Math.abs(tilt.smoothed??90)<=tilt.config.center);locked=awaitingCenter;
+function prepareQuestionInput(allowTouchWhileCentering=false){
+  awaitingCenter=inputMode==='tilt'&&!(hasFace&&tilt.state==='CENTER'&&Math.abs(tilt.smoothed??90)<=tilt.config.center);locked=awaitingCenter&&!allowTouchWhileCentering;
   if(awaitingCenter){tilt.waitForCenter();camStatus('Giữ đầu ở giữa để sẵn sàng nhé!')}
   setAnswerAvailability();
 }
 
-function startTimer(){clearInterval(timer);remaining=settings.seconds;if(!remaining)return;if($('#timer'))$('#timer').textContent=remaining+'s';timer=setInterval(()=>{if(view!=='play'||locked||calibrating||cameraState==='loading'||(inputMode==='tilt'&&(!hasFace||!calibrated))||document.hidden)return;remaining--;if($('#timer'))$('#timer').textContent=remaining+'s';if(remaining<=0)answer(-1)},1000)}
+function startTimer(){clearInterval(timer);remaining=settings.seconds;if(!remaining)return;if($('#timer'))$('#timer').textContent=remaining+'s';timer=setInterval(()=>{if(view!=='play'||locked||awaitingCenter||calibrating||cameraState==='loading'||(inputMode==='tilt'&&(!hasFace||!calibrated))||document.hidden)return;remaining--;if($('#timer'))$('#timer').textContent=remaining+'s';if(remaining<=0)answer(-1)},1000)}
 function cancelCelebration(){celebrationEpoch++;celebrationTimers.forEach(clearTimeout);celebrationTimers=[];clearTimeout(advance);document.body.classList.remove('journey-ending')}
 function celebrationLater(fn,ms){const epoch=celebrationEpoch;celebrationTimers.push(setTimeout(()=>{if(epoch===celebrationEpoch&&view==='play')fn()},ms))}
-function advanceQuestion(){index++;if(index>=round.length)finish();else{updateQuestion();updateJourney(true)}}
+function advanceQuestion(){if(!answerHistory[index]?.completed||completedQuestions!==index+1)return;index++;if(index>=round.length)finish();else{updateQuestion();updateJourney(true)}}
 function answer(side){
   if(view!=='play'||locked)return;
   const q=round[index],record=recordAnswer(answerHistory,q,index,side);if(!record)return;
   locked=true;awaitingCenter=false;tilt.waitForCenter();clearInterval(timer);cancelCelebration();
-  const good=record.isCorrect;if(good)score++;
+  const good=record.completed;if(good&&record.firstTryCorrect)score++;
   $('#score').textContent=score;clearHold();
-  ['left','right'].forEach((s,i)=>{const button=$('#'+s+'-answer');button.disabled=true;if(i===q.correct){button.classList.add('correct');button.dataset.feedback='correct';button.setAttribute('aria-label','Đáp án đúng: '+q[s])}else if(i===side){button.classList.add('wrong');button.dataset.feedback='wrong';button.setAttribute('aria-label','Đáp án em chọn, chưa đúng: '+q[s])}});
-  $('#feedback').textContent=good?'✓ CHÍNH XÁC! Lọ Lem tiến thêm một bước!':side<0?'⏱ Hết giờ! Thử tiếp ở câu sau nhé!':'✕ CHƯA ĐÚNG! Thử tiếp ở câu sau nhé!';
+  ['left','right'].forEach((s,i)=>{const button=$('#'+s+'-answer');button.disabled=true;if(i===side){button.classList.add(good?'correct':'wrong');button.dataset.feedback=good?'correct':'wrong';button.setAttribute('aria-label',(good?'Đáp án đúng: ':'Đáp án em chọn, chưa đúng: ')+q[s])}});
+  $('#feedback').textContent=good?'Chính xác!':side<0?'Hết giờ, em thử lại nhé!':'Chưa đúng, em thử lại nhé!';
   effect(good);
-  celebrationLater(()=>{completedQuestions++;updateJourney(true)},400);
+  if(!good){
+    celebrationLater(()=>{clearAnswerFeedback();prepareQuestionInput(true);startTimer()},800);
+    return;
+  }
+  celebrationLater(()=>{completedQuestions=index+1;updateJourney(true)},400);
   celebrationLater(advanceQuestion,1200);
 }
 function finish(){
+  if(completedQuestions!==round.length||answerHistory.length!==round.length||answerHistory.some(entry=>!entry.completed))return;
   cancelCelebration();clearInterval(timer);audio.pause();locked=true;
   const lane=$('#journey-lane');if(!lane){showFinale();return}
   const walker=$('#princess-walker'),prince=$('#prince-goal'),pair=$('#royal-meeting');
@@ -192,8 +198,8 @@ function renderEnd(){
  <div class="finale-heading royal-ribbon">${royalCrown()}<h1>Lọ Lem đã gặp Hoàng tử!</h1><p>Phép màu đã đưa hai người đến bên nhau.</p></div>
  <div class="finale-summary royal-results">${royalCrown()}<div class="result-title">✦ KẾT QUẢ ✦</div>
  <div class="stats" aria-label="Kết quả trò chơi">
- <div class="stat crystal-card crystal-correct"><span class="crystal-label">✓ Đúng</span><strong>${score}</strong></div>
- <div class="stat crystal-card crystal-wrong"><span class="crystal-label">✕ Sai</span><strong>${round.length-score}</strong></div>
+ <div class="stat crystal-card crystal-correct"><span class="crystal-label">✓ Đúng lần đầu</span><strong>${score}</strong></div>
+ <div class="stat crystal-card crystal-wrong"><span class="crystal-label">↻ Đã sửa sai</span><strong>${round.length-score}</strong></div>
  <div class="stat crystal-card crystal-score"><span class="crystal-label">🏆 Điểm</span><strong>${score}/${round.length}</strong></div>
  </div>
  <div class="end-review-action">${btn('XEM LẠI BÀI LÀM','review','book','secondary')}</div>
@@ -207,15 +213,15 @@ function renderReview(){
   app.innerHTML=`<section class="review-scene" aria-labelledby="review-title">
     <div class="review-panel">
       <div class="review-heading"><h1 id="review-title" tabindex="-1">XEM LẠI BÀI LÀM</h1>
-        <div class="review-totals" aria-label="Tổng kết bài làm"><span>✓ Đúng: <strong>${score}</strong></span><span>✕ Sai: <strong>${round.length-score}</strong></span><span>🏆 Điểm: <strong>${score}/${round.length}</strong></span></div>
+        <div class="review-totals" aria-label="Tổng kết bài làm"><span>✓ Đúng lần đầu: <strong>${score}</strong></span><span>↻ Đã sửa sai: <strong>${round.length-score}</strong></span><span>🏆 Điểm: <strong>${score}/${round.length}</strong></span></div>
         ${btn('QUAY LẠI KẾT QUẢ','results','left','secondary')}
       </div>
       <div class="review-list" role="list">${answerHistory.map(entry=>`
-        <article class="review-card ${entry.isCorrect?'review-correct':'review-wrong'}" role="listitem" aria-labelledby="review-question-${entry.questionIndex}">
-          <div class="review-card-top"><span>CÂU ${entry.questionIndex+1}</span><span class="review-badge">${entry.isCorrect?'✓ ĐÚNG':'✕ SAI'}</span></div>
+        <article class="review-card ${entry.firstTryCorrect?'review-correct':'review-wrong'}" role="listitem" aria-labelledby="review-question-${entry.questionIndex}">
+          <div class="review-card-top"><span>CÂU ${entry.questionIndex+1}</span><span class="review-badge">${entry.firstTryCorrect?'✓ Đúng ngay lần đầu':`✓ Đã hoàn thành sau ${entry.attempts.length} lần thử`}</span></div>
           <h2 id="review-question-${entry.questionIndex}">${esc(entry.questionText)}</h2>
           <div class="review-answers">
-            <div><span>Đáp án của em:</span><p class="${entry.isCorrect?'answer-correct':'answer-wrong'}">${entry.selectedAnswer===null?'Chưa chọn (hết giờ)':esc(entry.options[entry.selectedAnswer])} <span aria-hidden="true">${entry.isCorrect?'✓':'✕'}</span></p></div>
+            <div><span>Các lần trả lời của em:</span>${entry.attempts.map((attempt,i)=>`<p class="${attempt.isCorrect?'answer-correct':'answer-wrong'}">Lần ${i+1}: ${attempt.selectedAnswer===null?'Chưa chọn (hết giờ)':esc(entry.options[attempt.selectedAnswer])} <span aria-hidden="true">${attempt.isCorrect?'✓':'✕'}</span></p>`).join('')}</div>
             <div><span>Đáp án đúng:</span><p class="answer-correct">${esc(entry.options[entry.correctAnswer])} <span aria-hidden="true">✓</span></p></div>
           </div>
         </article>`).join('')}</div>
