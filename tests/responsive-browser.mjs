@@ -60,7 +60,7 @@ for (const [engine, launcher] of [['chromium',chromium],['webkit',webkit]]) {
       try {
         await ready(page,base+'/current/');
         const m=await inspect(page);
-        await page.screenshot({path:`test-results/${engine}-${width}x${height}.png`});
+        await page.screenshot({path:`test-results/${engine}-${width}x${height}.jpg`, quality:85});
         check(m,tablet);
         if(!tablet) {
           const baseline=await context.newPage();
