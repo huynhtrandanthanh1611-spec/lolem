@@ -27,7 +27,7 @@ for(const count of [1,5,10,17,20,100]){
   assert.throws(()=>{student[0].correct=1},TypeError);
   assert.deepEqual(questionsFromSnapshot(await loadSharedQuiz(shared.url)),original,'Refresh restores the entire quiz');
   const history=[];
-  student.forEach((q,i)=>recordAnswer(history,q,i,i<14?q.correct:1-q.correct));
+  student.forEach((q,i)=>{recordAnswer(history,q,i,i<14?q.correct:1-q.correct);if(!history[i].completed)recordAnswer(history,q,i,q.correct)});
   assert.equal(history.length,count);
   assert.equal(history.filter(q=>q.isCorrect).length,Math.min(14,count));
   const layout=journeyLayout(count,count-1,700,84);
