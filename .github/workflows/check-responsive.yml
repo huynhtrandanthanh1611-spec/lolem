@@ -1,0 +1,60 @@
+name: Check iPad responsive layout
+on:
+  pull_request:
+    paths:
+      - 'viewport.*'
+      - 'opening.css'
+      - 'index.html'
+      - 'tests/**'
+      - '.github/workflows/check-responsive.yml'
+permissions:
+  contents: read
+jobs:
+  browsers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare current and baseline websites
+        env:
+          RESPONSIVE_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile, shutil, subprocess, os
+          root=Path('_responsive')
+          for name in ['current','baseline']:
+              target=root/name
+              target.mkdir(parents=True)
+              with zipfile.ZipFile('hoang-tu-lo-lem-github-pages.zip') as z: z.extractall(target)
+              for asset in Path('.').glob('royal-*'): shutil.copy2(asset,target/'assets'/asset.name)
+              for filename in ['index.html','style.css','opening.css','sharing.css','app.js','quiz-share.js','journey-layout.js','answer-history.js']:
+                  if name=='baseline':
+                      (target/filename).write_bytes(subprocess.check_output(['git','show',os.environ['RESPONSIVE_BASE_SHA']+':'+filename]))
+                  else: shutil.copy2(filename,target/filename)
+          for filename in ['viewport.js','viewport.css']: shutil.copy2(filename,root/'current'/filename)
+          PY
+      - name: Install browser test dependency
+        run: |
+          npm install --prefix "$RUNNER_TEMP/lolem-browser-tests" --no-package-lock --no-save playwright@1.55.0
+          "$RUNNER_TEMP/lolem-browser-tests/node_modules/.bin/playwright" install --with-deps chromium webkit
+      - name: Check layout and interactions in Chromium and WebKit
+        env:
+          PLAYWRIGHT_MODULE: ${{ runner.temp }}/lolem-browser-tests/node_modules/playwright
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory _responsive > "$RUNNER_TEMP/lolem-http.log" 2>&1 &
+          node tests/viewport.test.mjs
+          node tests/answer-history.test.mjs
+          node tests/journey-layout.test.mjs
+          node tests/quiz-share.test.mjs
+          node tests/responsive-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ipad-responsive-results
+          path: test-results

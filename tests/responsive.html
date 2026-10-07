@@ -5,22 +5,58 @@
 <meta name="robots" content="noindex">
 <style>
   body{margin:0;background:#e6e9ed;font:14px system-ui}
-  label{display:block;position:sticky;top:0;z-index:1;padding:10px;background:#fff}
+  .toolbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:1;padding:10px;background:#fff}
   select{font:inherit;margin-left:8px}
+  button{font:inherit;padding:6px 10px}
+  pre{margin:0;padding:12px;white-space:pre-wrap;background:#fff}
   iframe{display:block;border:0;margin:0;background:#fff}
 </style>
-<label>Kích thước kiểm tra<select id="viewport">
+<div class="toolbar"><label>Kích thước kiểm tra<select id="viewport">
   <option value="1366,768">1366 × 768</option>
-  <option value="1600,900">1600 × 900</option>
   <option value="1920,1080">1920 × 1080</option>
+  <option value="1024,768">iPad ngang 1024 × 768</option>
+  <option value="1180,820">iPad ngang 1180 × 820</option>
+  <option value="1194,834">iPad ngang 1194 × 834</option>
+  <option value="1366,1024">iPad ngang 1366 × 1024</option>
+  <option value="768,1024">iPad dọc 768 × 1024</option>
+  <option value="820,1180">iPad dọc 820 × 1180</option>
+  <option value="1024,648">Thanh Safari hiện: 1024 × 648</option>
+  <option value="1180,700">Thanh Safari hiện: 1180 × 700</option>
+  <option value="1194,714">Thanh Safari hiện: 1194 × 714</option>
+  <option value="1366,904">Thanh Safari hiện: 1366 × 904</option>
+  <option value="1024,420">Fallback cuộn: 1024 × 420</option>
   <option value="390,844">390 × 844</option>
-</select></label>
-<iframe title="Giao diện trò chơi" src="../index.html?v=20261004-share-21" width="1366" height="768"></iframe>
+</select></label><button id="measure">Đo giao diện</button></div>
+<iframe title="Giao diện trò chơi" src="../index.html?v=20261007-ipad-22" width="1366" height="768" allow="camera; fullscreen"></iframe>
+<pre id="report" aria-live="polite">Chọn kích thước, rồi bấm Đo giao diện. Đây là kiểm tra viewport, không thay thế Safari/iPad thật.</pre>
 <script>
+  const frame=document.querySelector('iframe');
   document.querySelector('select').addEventListener('change',event=>{
     const [width,height]=event.target.value.split(',');
-    const frame=document.querySelector('iframe');
     frame.width=width;frame.height=height;
+  });
+  document.querySelector('#measure').addEventListener('click',()=>{
+    const doc=frame.contentDocument, win=frame.contentWindow;
+    const rect=selector=>{
+      const el=doc.querySelector(selector);
+      if(!el||!el.getClientRects().length)return null;
+      const r=el.getBoundingClientRect();
+      return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom,right:r.right};
+    };
+    const names=['.setup-title','header nav','.opening-guide','.test-mirror-section','.opening-startup','[data-action="start"]'];
+    const rects=Object.fromEntries(names.map(selector=>[selector,rect(selector)]));
+    const buttons=[...doc.querySelectorAll('.opening-stack button,header .nav')].filter(el=>el.getClientRects().length).map(el=>{
+      const r=el.getBoundingClientRect(),hit=doc.elementFromPoint(r.x+r.width/2,r.y+r.height/2);
+      return {label:el.textContent.trim(),height:r.height,inside:r.top>=0&&r.bottom<=win.innerHeight&&r.left>=0&&r.right<=win.innerWidth,unobstructed:el===hit||el.contains(hit)};
+    });
+    const intersects=(a,b)=>a&&b&&a.x<b.right&&b.x<a.right&&a.y<b.bottom&&b.y<a.bottom;
+    const main=doc.querySelector('#app');
+    document.querySelector('#report').textContent=JSON.stringify({viewport:[win.innerWidth,win.innerHeight],screen:doc.body.dataset.screen,
+      horizontalOverflow:doc.documentElement.scrollWidth>win.innerWidth,
+      needsScroll:main.scrollHeight>main.clientHeight+1,scrollMode:win.getComputedStyle(main).overflowY,
+      guideOverControls:intersects(rects['.opening-guide'],rects['.opening-startup']),
+      mirrorOverControls:intersects(rects['.test-mirror-section'],rects['.opening-startup']),
+      allVisible:buttons.every(b=>b.inside),allUnobstructed:buttons.every(b=>b.unobstructed),rects,buttons},null,2);
   });
 </script>
 </html>
