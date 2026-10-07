@@ -44,6 +44,8 @@ jobs:
           cp tests/responsive.html _site/qa/responsive.html
           cp style.css _site/style.css
           cp opening.css _site/opening.css
+          cp viewport.css _site/viewport.css
+          cp viewport.js _site/viewport.js
           cp royal-characters-v6.webp _site/assets/royal-characters-v6.webp
           cp royal-meeting-v9.webp _site/assets/royal-meeting-v9.webp
           cp royal-opening-v10.webp _site/assets/royal-opening-v10.webp
@@ -57,6 +59,7 @@ jobs:
           node tests/answer-history.test.mjs
           node tests/journey-layout.test.mjs
           node tests/quiz-share.test.mjs
+          node tests/viewport.test.mjs
           touch _site/.nojekyll
 
       - name: Configure Pages
